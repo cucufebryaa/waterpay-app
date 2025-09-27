@@ -45,3 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+window.addEventListener('load', function() {
+    const loader = document.querySelector('.loader-wrapper');
+    
+    // Pastikan elemen loader ditemukan sebelum menambahkan class
+    if (loader) {
+        loader.classList.add('hidden');
+    }
+});

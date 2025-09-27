@@ -1,192 +1,207 @@
+/* Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+/* Variabel Warna & Style Global */
 :root {
-    --primary-color: #5A8FEE; /* Biru yang lebih dalam */
-    --secondary-color: #D0E7F5; /* Biru pastel */
-    --soft-cream: #F5F0E1; /* Cream lembut */
-    --text-dark: #2F3645;
-    --text-muted: #6B7C95;
+    --primary-color: #0d6efd;
+    --dark-color: #212529;
+    --body-color: #f8f9fa;
+    --text-muted: #6c757d;
+    --font-family: 'Plus Jakarta Sans', sans-serif;
+    --border-radius: 0.5rem; /* Radius untuk tombol dan elemen lain */
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    color: var(--text-dark);
-    background: linear-gradient(135deg, var(--soft-cream) 0%, var(--secondary-color) 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: var(--font-family);
+    background-color: #ffffff;
+    color: var(--dark-color);
 }
 
+/* Kustomisasi Container */
+.container-custom {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+/* 1. Navbar */
+/* Disederhanakan karena styling background dan shadow sudah ditangani oleh class Bootstrap di HTML */
 .navbar {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     padding: 1rem 0;
 }
 
-.container-custom {
-    max-width: 1200px;
-}
-
-.logo-text {
+.navbar-brand .logo-text {
+    font-weight: 800;
     font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
+    color: var(--dark-color);
 }
 
 .nav-link {
+    color: var(--dark-color);
     font-weight: 600;
-    color: var(--text-muted) !important;
+    margin: 0 0.75rem;
     transition: color 0.3s ease;
 }
 
-.nav-link:hover {
-    color: var(--primary-color) !important;
+.nav-link.active, .nav-link:hover {
+    color: var(--primary-color);
+}
+
+/* Konsistensi Tombol */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
 }
 
 .btn-primary {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-primary:hover {
-    background-color: #4A7FD9;
-    border-color: #4A7FD9;
+    opacity: 0.9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(90, 143, 238, 0.3);
 }
 
 .btn-outline-primary {
-    color: var(--primary-color);
     border-color: var(--primary-color);
-    transition: background-color 0.3s ease;
+    color: var(--primary-color);
 }
 
 .btn-outline-primary:hover {
     background-color: var(--primary-color);
-    color: #fff;
+    color: #ffffff;
 }
 
+.nav-buttons {
+    gap: 0.75rem; /* Jarak antar tombol */
+}
+
+/* 2. Main Content (Hero Section) */
 .main-content {
-    flex-grow: 1;
-    padding: 8rem 0;
+    min-height: calc(100vh - 150px); /* Kalkulasi tinggi agar footer tidak melayang */
+    display: flex;
+    align-items: center;
 }
 
 .hero-text h1 {
+    font-weight: 800;
     font-size: 3.5rem;
     line-height: 1.2;
-    color: var(--text-dark);
+    color: var(--dark-color);
 }
 
-@media (max-width: 768px) {
-    .main-content {
-        padding: 5rem 0;
-    }
-    .hero-text h1 {
-        font-size: 2.5rem;
-    }
-}
-.login-container {
-    background: linear-gradient(135deg, var(--soft-cream) 0%, var(--secondary-color) 100%);
-    min-height: 100vh;
-}
-
-.login-container {
-    background: linear-gradient(135deg, var(--soft-cream) 0%, var(--secondary-color) 100%);
-    min-height: 100vh;
-}
-
-.login-box {
-    max-width: 450px;
-    width: 100%;
-    border-radius: 1.5rem !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.login-box h2 {
-    font-weight: 700;
-}
-
-.form-side {
-    background: #fff;
+.hero-text .lead {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 500px;
 }
 
 .hero-image-container {
-    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef; /* Placeholder color */
+    height: 500px;
+    border-radius: var(--border-radius);
 }
 
-.input-group-text {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-    color: var(--primary-text-color);
+
+/* 3. Footer */
+.footer-bottom {
+    border-top: 1px solid #dee2e6;
+    background-color: #ffffff;
 }
 
-.form-control:focus {
-    box-shadow: 0 0 0 0.25rem rgba(90, 143, 238, 0.25);
-    border-color: var(--primary-color);
-}
-
-@media (max-width: 768px) {
-    .login-box {
-        max-width: 90%;
-    }
-}
-
-/* Tampilan Form Pendaftaran */
-.register-container {
-    background: linear-gradient(135deg, var(--soft-cream) 0%, var(--secondary-color) 100%);
-    min-height: 100vh;
-    padding: 2rem 0;
-}
-
-.register-box {
-    max-width: 500px;
-    width: 100%;
-    border-radius: 1.5rem !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.register-box h2 {
-    font-weight: 700;
-}
-
-/* Styling untuk Upload Foto */
-.profile-pic-div {
-    width: 120px;
-    height: 120px;
-    position: relative;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid var(--primary-color);
-}
-
-#photo {
+/* 4. Loader Styling */
+.loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-#uploadBtn {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    background-color: rgba(90, 143, 238, 0.8);
-    color: white;
-    border: none;
-    cursor: pointer;
+.loader {
+    border: 6px solid #f3f3f3; /* Light grey */
+    border-top: 6px solid var(--primary-color); /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-wrapper.hidden {
     opacity: 0;
-    transition: opacity 0.3s ease;
+    visibility: hidden;
 }
 
-.profile-pic-div:hover #uploadBtn {
-    opacity: 1;
+/* 5. Generic Section Styling & Smooth Scroll */
+html {
+    scroll-behavior: smooth;
 }
 
-/* Responsivitas */
-@media (max-width: 768px) {
-    .register-box {
-        max-width: 90%;
-        padding: 2rem !important;
-    }
+.section {
+    padding: 5rem 0;
 }
+
+.bg-light-gray {
+    background-color: var(--body-color);
+}
+
+.section-title {
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-weight: 400;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3rem;
+}
+
+
+/* 6. "Tentang Kami" Section Styling */
+.feature-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 2rem;
+}
+
+.feature-list li {
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+}
+
+.feature-list li .emoji {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.about-subheading {
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* 7. "Kontak" Section Styling */
+/* Class .contact-section DIHAPUS karena class .section sudah cukup untuk memberikan padding yang konsisten */
