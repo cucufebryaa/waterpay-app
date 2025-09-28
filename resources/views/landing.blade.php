@@ -17,7 +17,7 @@
                 </p>
                 <div class="d-flex flex-column flex-sm-row">
                     <a href="{{ route('register.admin') }}" class="btn btn-primary btn-lg me-sm-3 mb-3 mb-sm-0">Mulai Sekarang</a>
-                    <a href="#" class="btn btn-outline-secondary btn-lg">Pelajari Dulu</a>
+                    <a href="#tentang" class="btn btn-outline-secondary btn-lg">About U</a>
                 </div>
             </div>
             <div class="col-md-5 d-none d-md-block">
@@ -90,15 +90,57 @@
 {{-- =============================================== --}}
 {{-- MULAI SECTION KONTAK                          --}}
 {{-- =============================================== --}}
-<section id="kontak" class="section contact-section">
+<section id="kontak" class="section">
     <div class="container-custom">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
                 <h2 class="section-title">Hubungi Kami</h2>
                 <p class="section-subtitle">
-                    Punya pertanyaan atau butuh informasi lebih lanjut? Jangan ragu untuk menghubungi kami. Kami akan segera menyiapkan form kontak di sini untuk kemudahan Anda.
+                    Punya pertanyaan atau butuh informasi lebih lanjut? Silakan isi form di bawah ini atau hubungi kami langsung melalui WhatsApp.
                 </p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                {{-- Form Kontak --}}
+                <form action="#" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Alamat Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Alamat</label>
+                        <input type="text" class="form-control" id="address" name="address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Pesan</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Kirim Pesan</button>
+                    </div>
+                </form>
+
+                {{-- Pemisah atau Tombol WhatsApp --}}
+                <div class="text-center my-4">
+                    <span class="text-muted">ATAU</span>
                 </div>
+
+                {{-- Tombol WhatsApp --}}
+                <div class="d-grid">
+                    {{-- PENTING: Ganti 6281234567890 dengan nomor WhatsApp Admin Anda --}}
+                    <a href="https://wa.me/6281234567890" class="btn btn-whatsapp btn-lg" target="_blank">
+                        <i class="bi bi-whatsapp me-2"></i> 
+                        Tekan untuk menghubungi admin
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </section>

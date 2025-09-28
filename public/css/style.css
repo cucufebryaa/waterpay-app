@@ -103,10 +103,16 @@ body {
 }
 
 .hero-image-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e9ecef; /* Placeholder color */
+    /* Menentukan gambar dan path-nya dari folder css */
+    background-image: url('../images/hero.jpg');
+    
+    /* Membuat gambar menutupi seluruh area div tanpa distorsi */
+    background-size: cover;
+    
+    /* Memastikan bagian tengah gambar yang selalu ditampilkan */
+    background-position: center center;
+
+    /* Menjaga properti yang sudah ada */
     height: 500px;
     border-radius: var(--border-radius);
 }
@@ -205,3 +211,15 @@ html {
 
 /* 7. "Kontak" Section Styling */
 /* Class .contact-section DIHAPUS karena class .section sudah cukup untuk memberikan padding yang konsisten */
+/* 8. Tombol Kustom WhatsApp */
+.btn-whatsapp {
+    background-color: #25D366;
+    border-color: #25D366;
+    color: #ffffff;
+}
+
+.btn-whatsapp:hover {
+    background-color: #1EBE57;
+    border-color: #1EBE57;
+    color: #ffffff;
+}

@@ -1,106 +1,186 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Super Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/dashboard-style.css') }}">
-</head>
-<body>
+@extends('layouts.app')
 
-<div class="d-flex" id="wrapper">
-    <div class="bg-white" id="sidebar-wrapper">
-        <div class="sidebar-heading text-center py-4 fs-4 fw-bold text-uppercase border-bottom">
-            <span class="logo-text">WATERPAY</span>
-        </div>
-        <div class="list-group list-group-flush my-3">
-            <a href="#" class="list-group-item list-group-item-action bg-transparent second-text active">
-                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-            </a>
-            <a href="{{ route('superadmin.data-admin') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                <i class="bi bi-person-circle me-2"></i>Admin
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                <i class="bi bi-person-circle me-2"></i>Petugas
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                <i class="bi bi-person-circle me-2"></i>Pelanggan
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                <i class="bi bi-building me-2"></i>Approval Company
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
-                <i class="bi bi-gear-wide-connected me-2"></i>Pengaturan
-            </a>
-        </div>
+@section('title', 'Dashboard Super Admin')
+
+@section('content')
+    {{-- Greeting --}}
+    <div class="mb-4">
+        <h1 class="h3 mb-1">Selamat Datang, {{ Auth::user()->name }}!</h1>
+        <p class="text-muted">Berikut adalah ringkasan data perusahaan di sistem Anda.</p>
     </div>
-    <div id="page-content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-list primary-text fs-4 me-3" id="menu-toggle"></i>
-                <h2 class="fs-2 m-0">Dashboard</h2>
-            </div>
-            <div class="ms-auto d-flex align-items-center">
-                <a href="#" class="text-dark me-3"><i class="bi bi-bell fs-5"></i></a>
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="me-2 text-uppercase">{{ Auth::user()->username }}</span>
-                        <i class="bi bi-person-circle me-2 fs-5"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="post">
-                                @csrf
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
 
-        <div class="container-fluid px-4">
-            <div class="row g-3 my-2">
-                <div class="col-12">
-                    <div class="dashboard-card py-3 px-4 text-center">
-                        <h5 class="fw-bold mb-0">Selamat Datang di Sistem Tagihan Air Bersih</h5>
+    {{-- Kartu Metrik --}}
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary text-white rounded-3 p-3 me-3">
+                        <i class="bi bi-buildings fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title text-muted mb-1">Total Company</h5>
+                        <p class="fs-4 fw-bold mb-0">{{ $totalCompanies }}</p>
                     </div>
                 </div>
             </div>
-
-            <div class="row g-3 my-4">
-                <div class="col-md-4">
-                    <div class="p-4 bg-white shadow-sm rounded-3 text-center">
-                        <h4 class="fw-bold text-dark mb-0">Jumlah Admin</h4>
-                        <p class="fs-2 fw-bold primary-text mb-0 mt-2">{{ $adminCount }}</p>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-warning text-white rounded-3 p-3 me-3">
+                        <i class="bi bi-file-earmark-text fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title text-muted mb-1">Pengajuan Baru</h5>
+                        <p class="fs-4 fw-bold mb-0">{{ $pendingCompanies }}</p>
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <div class="p-4 bg-white shadow-sm rounded-3 text-center">
-                        <h4 class="fw-bold text-dark mb-0">Jumlah Petugas</h4>
-                        <p class="fs-2 fw-bold primary-text mb-0 mt-2">{{ $petugasCount }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success text-white rounded-3 p-3 me-3">
+                        <i class="bi bi-check-circle fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title text-muted mb-1">Disetujui</h5>
+                        <p class="fs-4 fw-bold mb-0">{{ $approvedCompanies }}</p>
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <div class="p-4 bg-white shadow-sm rounded-3 text-center">
-                        <h4 class="fw-bold text-dark mb-0">Jumlah Pelanggan</h4>
-                        <p class="fs-2 fw-bold primary-text mb-0 mt-2">{{ $pelangganCount }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-danger text-white rounded-3 p-3 me-3">
+                        <i class="bi bi-x-circle fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title text-muted mb-1">Ditolak</h5>
+                        <p class="fs-4 fw-bold mb-0">{{ $rejectedCompanies }}</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ asset('js/dashboard-script.js') }}"></script>
-</body>
-</html>
+    {{-- Chart --}}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Grafik Pengajuan Pendaftaran</h5>
+                        
+                        {{-- FORM FILTER TANGGAL --}}
+                        <form id="filterForm" class="d-flex flex-wrap align-items-center gap-2">
+    
+                            {{-- TAMBAHKAN atribut 'value' di sini --}}
+                            <input type="date" id="startDate" class="form-control form-control-sm" style="width: auto;" 
+                                   value="{{ $defaultStartDate->format('Y-m-d') }}">
+                        
+                            <span class="text-muted">hingga</span>
+                            
+                            {{-- TAMBAHKAN atribut 'value' di sini juga --}}
+                            <input type="date" id="endDate" class="form-control form-control-sm" style="width: auto;"
+                                   value="{{ $defaultEndDate->format('Y-m-d') }}">
+                        
+                            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                        </form>
+                    </div>
+                    <canvas id="submissionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('submissionChart').getContext('2d');
+    let submissionChart; // Deklarasikan variabel chart di luar
+
+    // Fungsi untuk membuat atau memperbarui chart
+    function renderChart(chartLabels, chartData) {
+        if (submissionChart) {
+            submissionChart.destroy(); // Hancurkan chart lama jika ada
+        }
+        submissionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Jumlah Pengajuan',
+                    data: chartData,
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    borderColor: 'rgba(13, 110, 253, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1 // Pastikan sumbu Y hanya menampilkan angka bulat
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Render chart awal saat halaman dimuat
+    const initialChartData = @json($chartData);
+    renderChart(initialChartData.labels, initialChartData.data);
+
+    // Event listener untuk form filter
+    const filterForm = document.getElementById('filterForm');
+    filterForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Mencegah form dari reload halaman
+        
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const filterButton = this.querySelector('button[type="submit"]');
+
+        if (!startDate || !endDate) {
+            alert('Silakan pilih rentang tanggal terlebih dahulu.');
+            return;
+        }
+
+        // UI feedback: tampilkan loading
+        filterButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+        filterButton.disabled = true;
+
+        // Buat URL untuk AJAX
+        const url = `{{ route('superadmin.chart.data') }}?start_date=${startDate}&end_date=${endDate}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Perbarui chart dengan data baru
+                renderChart(data.labels, data.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chart data:', error);
+                alert('Gagal memuat data chart. Silakan coba lagi.');
+            })
+            .finally(() => {
+                // Kembalikan tombol ke state normal
+                filterButton.innerHTML = 'Filter';
+                filterButton.disabled = false;
+            });
+    });
+});
+</script>
+@endpush

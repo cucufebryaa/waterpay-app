@@ -12,6 +12,7 @@ class Admin extends Model
     protected $fillable = [
         'name', // <-- Pastikan kolom ini ada
         'alamat',
+        'email',
         'no_hp',
         'id_user',
         'id_company',

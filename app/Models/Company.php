@@ -13,8 +13,10 @@ class Company extends Model
         'name',
         'no_hp',
         'alamat',
+        'nama_bank',
         'no_rekening',
-        'pj', // Pastikan kolom ini ada dan namanya benar
+        'penanggung_jawab',
+        'status'
     ];
 
     public function admins()

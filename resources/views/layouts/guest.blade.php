@@ -6,7 +6,7 @@
     <title>@yield('title', 'Waterpay PAMS')</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -20,34 +20,33 @@
     </div>
 
     <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-        <div class="container-custom">
-            {{-- <a class="navbar-brand" href="/">
-                <span class="logo-text">Waterpay</span>
-            </a> --}}
+        {{-- 
+            PERUBAHAN KUNCI DI SINI:
+            - Kelas '.container-custom' diubah menjadi '.container-fluid'.
+            - '.container-fluid' akan membuat lebar navbar menjadi 100% dari lebar layar.
+        --}}
+        <div class="container-fluid px-3">
+            <a class="navbar-brand" href="/">
+                <span class="logo-text">Waterpay App</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                {{-- 
-                    PERUBAHAN KUNCI DI SINI:
-                    - 'mx-auto' (margin horizontal auto) diubah menjadi 'me-auto' (margin-end auto).
-                    - Ini akan mendorong elemen ini dan semua elemen setelahnya ke kanan.
-                    - 'mb-2 mb-lg-0' ditambahkan untuk spasi yang lebih baik pada tampilan mobile.
-                --}}
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#tentang">Tentang Kami</a> 
+                        <a class="nav-link" href="#tentang">About Us</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#kontak">Kontak</a>
+                        <a class="nav-link" href="#kontak">Contact</a>
                     </li>
                 </ul>
                 <div class="d-flex nav-buttons align-items-center">
-                    <a href="{{ route('login') }}" class="btn btn-outline-primary">Masuk</a>
-                    <a href="{{ route('register.admin') }}" class="btn btn-primary">Daftar Sekarang</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline-primary">Login</a>
+                    <a href="{{ route('register.admin') }}" class="btn btn-primary">Register Company</a>
                 </div>
             </div>
         </div>
