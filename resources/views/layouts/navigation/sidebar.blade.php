@@ -11,7 +11,7 @@
 
         {{-- Menu Khusus Super Admin --}}
         @if(Auth::user()->role == 'superadmin')
-        <a href="#" class="list-group-item list-group-item-action">
+        <a href="{{ route('superadmin.companies.pending') }}" class="list-group-item list-group-item-action">
             <i class="bi bi-building-check me-2"></i>Approval Company
         </a>
         @endif

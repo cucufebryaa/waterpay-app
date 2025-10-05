@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController; // Saya sesuaikan dengan nama controller dari contoh sebelumnya
 use App\Http\Controllers\SuperAdmin\DashboardController;
+use App\Http\Controllers\SuperAdmin\CompanyApprovalController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\AdminController;
 
@@ -36,6 +37,15 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 Route::middleware(['auth'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('chart.data');
+    // Route untuk halaman list pengajuan perusahaan yang pending
+    Route::get('/companies/pending', [CompanyApprovalController::class, 'index'])->name('companies.pending');
+    
+    // Route untuk aksi Approve (PUT)
+    Route::put('/companies/{company}/approve', [CompanyApprovalController::class, 'approve'])->name('companies.approve');
+    
+    // Route untuk aksi Reject (PUT)
+    Route::put('/companies/{company}/reject', [CompanyApprovalController::class, 'reject'])->name('companies.reject');
+
     // Tambahkan route superadmin lainnya di sini...
 });
 
