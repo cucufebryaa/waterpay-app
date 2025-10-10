@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('tb_companies', function (Blueprint $table) {
             $table->string('nama_bank')->after('alamat');
-            $table->string('penanggung_jawab')->after('no_rekening');
+            $table->string('username')->after('no_rekening');
             $table->string('status')->default('pending');
         });
     }
@@ -19,7 +19,7 @@ return new class extends Migration
     {
         Schema::table('tb_companies', function (Blueprint $table) {
             $table->dropColumn('nama_bank');
-            $table->dropColumn('penanggung_jawab');
+            $table->dropColumn('username');
             $table->dropColumn('status');
         });
     }

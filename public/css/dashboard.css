@@ -37,6 +37,57 @@ body {
     color: var(--primary-color);
     border-left: 4px solid var(--primary-color);
 }
+/* Dropdown Parent Active State */
+.nav-link.active-dropdown-parent {
+    background-color: var(--active-bg);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Submenu Styling */
+.nav-link.submenu-item {
+    padding-left: 35px;
+    font-weight: 500;
+    font-size: 0.95em;
+    color: #6c757d;
+}
+.nav-link.submenu-item.active {
+    color: var(--primary-color) !important;
+    background-color: transparent !important;
+    font-weight: 700;
+}
+
+/* ---------------------------------------------------- */
+/* --- 2. Responsiveness (Mobile & Tablet) --- */
+/* ---------------------------------------------------- */
+@media (max-width: 992px) {
+    /* Aturan untuk Sidebar di Mobile */
+    .sidebar-wrapper {
+        left: calc(0px - var(--sidebar-width)); /* Sembunyikan sidebar di luar layar */
+        box-shadow: none;
+    }
+
+    /* Aturan untuk Main Content di Mobile */
+    .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* Aturan untuk Topbar di Mobile */
+    .topbar-wrapper {
+        left: 0;
+        width: 100%;
+        position: sticky;
+    }
+}
+/* Utility untuk menyembunyikan/menampilkan tombol toggle di Topbar */
+.toggle-desktop { display: none !important; }
+.toggle-mobile { display: block !important; }
+
+@media (min-width: 993px) {
+    .toggle-desktop { display: block !important; }
+    .toggle-mobile { display: none !important; }
+}
 
 /* Main Content Wrapper */
 .main-content-wrapper {

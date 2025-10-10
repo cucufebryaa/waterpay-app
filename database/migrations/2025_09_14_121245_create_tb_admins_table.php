@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tb_admins', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nama_lengakp_PJ');
             $table->string('alamat')->nullable();
             $table->string('email')->nullable();
             $table->string('no_hp')->nullable();

@@ -27,11 +27,12 @@
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>No. HP</th>
+                        <th>Nama Perusahaan</th>
+                        <th>No HP</th>
                         <th>Alamat</th>
-                        <th>No. Rekening</th>
-                        <th>PJ (User)</th>
+                        <th>Nama Bank</th>
+                        <th>No Rekening</th>
+                        <th>Username</th>
                         <th>Created At</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Aksi (Jika Pending)</th>
@@ -44,9 +45,10 @@
                         <td>{{ $company->name }}</td>
                         <td>{{ $company->no_hp }}</td>
                         <td>{{ $company->alamat }}</td>
+                        <td>{{ $company->nama_bank }}</td>
                         <td>{{ $company->no_rekening }}</td>
                         {{-- Nama Penanggung Jawab dari relasi owner --}}
-                        <td>{{ $company->owner->name ?? 'User Dihapus' }}</td>
+                        <td>{{ $company->penanggung_jawab?? 'User Dihapus' }}</td>
                         <td>{{ $company->created_at->format('Y-m-d H:i') }}</td>
                         <td class="text-center">
                             @if ($company->status === 'approved')
