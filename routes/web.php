@@ -135,3 +135,56 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     });
 });
+
+Route::middleware(['role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
+        
+    // Rute Dashboard & Chart (dari controller dummy)
+    Route::get('/dashboard', [PetugasController::class, 'index'])->name('dashboard');
+    Route::get('/chart-data', [PetugasController::class, 'getChartData'])->name('chart.data');
+
+    // Rute Sidebar Lainnya (Placeholder)
+    Route::get('/pemakaian-air', function () {
+        return "Halaman Input Pemakaian Air (Petugas)";
+    })->name('pemakaian.index');
+    
+    Route::get('/keluhan', function () {
+        return "Halaman Keluhan (Petugas)";
+    })->name('keluhan.index');
+    
+    Route::get('/informasi', function () {
+        return "Halaman Informasi (Petugas)";
+    })->name('informasi.index');
+
+    Route::get('/pengaturan', function () {
+        return "Halaman Pengaturan (Petugas)";
+    })->name('pengaturan.index');
+});
+
+
+// ===================================
+// (BARU) Grup untuk Pelanggan
+// ===================================
+// Asumsi Anda punya middleware 'role:pelanggan'
+Route::middleware(['role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+    
+    // Rute Dashboard & Chart (dari controller dummy)
+    Route::get('/dashboard', [PelangganController::class, 'index'])->name('dashboard');
+    Route::get('/chart-data', [PelangganController::class, 'getChartData'])->name('chart.data');
+
+    // Rute Sidebar Lainnya (Placeholder)
+    Route::get('/tagihan', function () {
+        return "Halaman Tagihan (Pelanggan)";
+    })->name('tagihan.index');
+    
+    Route::get('/keluhan', function () {
+        return "Halaman Keluhan (Pelanggan)";
+    })->name('keluhan.index');
+    
+    Route::get('/informasi', function () {
+        return "Halaman Informasi (Pelanggan)";
+    })->name('informasi.index');
+
+    Route::get('/pengaturan', function () {
+        return "Halaman Pengaturan (Pelanggan)";
+    })->name('pengaturan.index');
+});

@@ -37,17 +37,4 @@
     {{-- Slot untuk script spesifik per halaman (misal: inisialisasi chart) --}}
     @stack('scripts')
 <body>
-<body>
-    {{-- SIDEBAR ADMIN BARU --}}
-    @include('layouts.navigation.sidebar')
-
-    <div class="main-content-wrapper">
-        <main class="py-4">
-            @yield('content')
-        </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
-</body>
 </html>

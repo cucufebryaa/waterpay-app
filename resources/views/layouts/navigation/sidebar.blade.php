@@ -2,110 +2,103 @@
     <div class="sidebar-heading text-center py-4 fs-4 fw-bold text-uppercase">
         Waterpay
     </div>
+
+    {{-- 
+      Kita ambil role user sekali saja di atas 
+      agar lebih bersih di dalam pengecekan @if
+    --}}
+    @php
+        $userRole = Auth::user()->role;
+    @endphp
+
     <div class="list-group list-group-flush my-3">
-        
-        {{-- Menu untuk Semua Role yang Login --}}
-        <a href="#" class="list-group-item list-group-item-action {{ request()->is('*/dashboard') ? 'active' : '' }}">
-            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-        </a>
 
-        {{-- Menu Khusus Super Admin --}}
-        @if(Auth::user()->role == 'superadmin')
-        <a href="{{ route('superadmin.companies.pending') }}" class="list-group-item list-group-item-action">
-            <i class="bi bi-building-check me-2"></i>Approval Company
-        </a>
+        {{-- =================================================== --}}
+        {{-- Menu Dashboard (Semua Role Punya)                 --}}
+        {{-- =================================================== --}}
+        
+        {{-- Asumsi: Anda punya route name yang berbeda untuk tiap dashboard role --}}
+        @if($userRole == 'superadmin')
+            <a href="{{ route('superadmin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+        @elseif($userRole == 'admin')
+            <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+        @elseif($userRole == 'petugas')
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('petugas.dashboard') ? 'active' : '' }}">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+        @elseif($userRole == 'pelanggan')
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('pelanggan.dashboard') ? 'active' : '' }}">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
         @endif
 
-        {{-- START REVISI DROP-DOWN MANAJEMEN USER --}}
-    <li class="nav-item">
-        @php
-            // Menentukan apakah salah satu submenu Management User aktif
-            $isManagementActive = request()->routeIs('superadmin.management-users.index*');
-            // Class kustom untuk styling parent (biru muda) saat salah satu submenu aktif
-            $parentClass = $isManagementActive ? 'active-dropdown-parent' : '';
-        @endphp
-        {{-- Menu untuk Super Admin & Admin --}}
-        @if(in_array(Auth::user()->role, ['superadmin', 'admin']))
-        <a href="{{ route('superadmin.management-users.index') }}" class="list-group-item list-group-item-action">
-            <i class="bi bi-people me-2"></i>Manajemen User
-        </a>
+
+        {{-- =================================================== --}}
+        {{-- Menu Khusus Super Admin                         --}}
+        {{-- =================================================== --}}
+        @if($userRole == 'superadmin')
+            <a href="{{ route('superadmin.companies.pending') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.companies.pending*') ? 'active' : '' }}">
+                <i class="bi bi-building-check me-2"></i>Approval Perusahaan
+            </a>
+            <a href="{{ route('superadmin.management-users.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.management-users.index*') ? 'active' : '' }}">
+                <i class="bi bi-people me-2"></i>Manajemen User
+            </a>
         @endif
 
-        <a href="#" class="list-group-item list-group-item-action">
-            <i class="bi bi-gear me-2"></i>Pengaturan
-        </a>
+
+        {{-- =================================================== --}}
+        {{-- Menu Khusus Admin                               --}}
+        {{-- =================================================== --}}
+        @if($userRole == 'admin')
+            <a href="{{ route('admin.petugas.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.petugas.index*') ? 'active' : '' }}">
+                <i class="bi bi-person-badge me-2"></i>Data Petugas
+            </a>
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pelanggan.index*') ? 'active' : '' }}">
+                <i class="bi bi-person-lines-fill me-2"></i>Data Pelanggan
+            </a>
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pemakaian.index*') ? 'active' : '' }}">
+                <i class="bi bi-droplet-half me-2"></i>Data Pemakaian
+            </a>
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan.index*') ? 'active' : '' }}">
+                <i class="bi bi-file-earmark-bar-graph me-2"></i>Laporan
+            </a>
+        @endif
+
+
+        {{-- =================================================== --}}
+        {{-- Menu Khusus Petugas                             --}}
+        {{-- =================================================== --}}
+        @if($userRole == 'petugas')
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('petugas.pemakaian.index*') ? 'active' : '' }}">
+                <i class="bi bi-droplet-half me-2"></i>Pemakaian Air
+            </a>
+        @endif
+
+
+        {{-- =================================================== --}}
+        {{-- Menu Sharing (Admin & Pelanggan)                --}}
+        {{-- =================================================== --}}
+        @if(in_array($userRole, ['admin', 'pelanggan']))
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('*.tagihan.index*') ? 'active' : '' }}">
+                <i class="bi bi-receipt me-2"></i>Tagihan/Pembayaran
+            </a>
+        @endif
+
+
+        {{-- =================================================== --}}
+        {{-- Menu Sharing (Admin, Petugas, Pelanggan)        --}}
+        {{-- =================================================== --}}
+        @if(in_array($userRole, ['admin', 'petugas', 'pelanggan']))
+            <a href="{{ route( $userRole . '.keluhan.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.keluhan.index*') ? 'active' : '' }}">
+                <i class="bi bi-exclamation-octagon me-2"></i>Keluhan
+            </a>
+            <a href="{{ route( $userRole . '.informasi.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.informasi.index*') ? 'active' : '' }}">
+                <i class="bi bi-info-circle me-2"></i>Informasi
+            </a>
+        @endif
     </div>
 </aside>
-
-<aside class="sidebar-wrapper">
-    <div class="sidebar-heading text-center py-4 fs-4 fw-bold text-uppercase border-bottom">
-        WATERPAY
-    </div>
-    
-    <ul class="nav flex-column sidebar-nav">
-        
-        {{-- 1. Dashboard Admin --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.dashboard')) active @endif" href="{{ route('admin.dashboard') }}">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
-            </a>
-        </li>
-
-        {{-- 2. Data Petugas --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.petugas.index')) active @endif" href="{{ route('admin.petugas.index') }}">
-                <i class="bi bi-person-workspace me-2"></i> Data Petugas
-            </a>
-        </li>
-        
-        {{-- 3. Data Pelanggan --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.pelanggan.index')) active @endif" href="{{ route('admin.pelanggan.index') }}">
-                <i class="bi bi-person-lines-fill me-2"></i> Data Pelanggan
-            </a>
-        </li>
-
-        {{-- 4. Pemakaian Air --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.pemakaian.index')) active @endif" href="{{ route('admin.pemakaian.index') }}">
-                <i class="bi bi-droplet-half me-2"></i> Pemakaian Air
-            </a>
-        </li>
-        
-        {{-- 5. Pembayaran Pelanggan --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.pembayaran.index')) active @endif" href="{{ route('admin.pembayaran.index') }}">
-                <i class="bi bi-credit-card me-2"></i> Pembayaran Pelanggan
-            </a>
-        </li>
-        
-        {{-- 6. Keluhan Pelanggan --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.keluhan.index')) active @endif" href="{{ route('admin.keluhan.index') }}">
-                <i class="bi bi-chat-square-text me-2"></i> Keluhan Pelanggan
-            </a>
-        </li>
-
-        {{-- 7. Laporan --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.laporan.index')) active @endif" href="{{ route('admin.laporan.index') }}">
-                <i class="bi bi-bar-chart-line me-2"></i> Laporan
-            </a>
-        </li>
-        
-        {{-- 8. Informasi (Pengaturan/Umum) --}}
-        <li class="nav-item">
-            <a class="nav-link @if(request()->routeIs('admin.informasi.index')) active @endif" href="{{ route('admin.informasi.index') }}">
-                <i class="bi bi-info-circle me-2"></i> Informasi
-            </a>
-        </li>
-        
-        {{-- Pengaturan (Contohnya di footer/bagian bawah) --}}
-        <li class="nav-item mt-auto">
-            <a class="nav-link @if(request()->routeIs('admin.pengaturan')) active @endif" href="#">
-                <i class="bi bi-gear-fill me-2"></i> Pengaturan
-            </a>
-        </li>
-    </ul>
-</aside>
-
