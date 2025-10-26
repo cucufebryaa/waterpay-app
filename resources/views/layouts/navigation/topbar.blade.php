@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 sticky-top">
     <div class="d-flex align-items-center">
         <i class="bi bi-calendar3 me-2"></i>
         <span>{{ \Carbon\Carbon::now()->translatedFormat('l, j F Y') }}</span>
