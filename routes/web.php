@@ -66,25 +66,8 @@ Route::middleware(['auth'])->prefix('superadmin')->name('superadmin.')->group(fu
         'update' => 'users.admin.update',
         'destroy' => 'users.admin.destroy',
     ]);
-    // INDIKATOR PENTING: Rute Gabungan untuk Management User
-    // Ini akan digunakan sebagai link utama di sidebar.
-    Route::get('/management-users', [UserManagementController::class, 'index'])->name('management-users.index'); 
-
-
-    // // INDIKATOR PEMBENARAN RUTE YANG HILANG/ERROR PADA SIDEBAR
-    // Route::get('/data-admin', [UserManagementController::class, 'index'])->name('data-admin'); 
-
-    // // --- Rute untuk Menu Dropdown Lain (Placeholder) ---
-    // // Rute ini akan digunakan di sidebar untuk menu Petugas dan Pelanggan
-    // Route::get('users/petugas', function () {
-    //     // Ganti dengan Controller Petugas Anda
-    //     return view('superadmin.data-petugas');
-    // })->name('users.petugas.index');
-    
-    // Route::get('users/pelanggan', function () {
-    //     // Ganti dengan Controller Pelanggan Anda
-    //     return view('superadmin.data-pelanggan');
-    // })->name('users.pelanggan.index');
+    Route::get('/management-users', [UserManagementController::class, 'index'])->name('management-users.index');
+    Route::delete('/management-users/{user}', [UserManagementController::class, 'destroy'])->name('management-users.destroy');
 });
 
 // Grup untuk Admin

@@ -13,12 +13,13 @@ class Admin extends Model
 
     // Nama field yang bisa diisi (sesuaikan dengan migrasi yang telah kita buat)
     protected $fillable = [
-        'user_id',
-        'id_company',
         'nama_lengkap',
+        'username',
         'alamat',
+        'email',
         'no_hp',
-        'nik', // Asumsi field 'nik' ada jika diminta di tabel
+        'id_user',
+        'id_company',
     ];
 
     /**

@@ -10,19 +10,9 @@ class CompanyApprovalController extends Controller
 {
     public function index()
     {
-        // Ambil SEMUA data perusahaan, eager load relasi 'owner' (User).
-        // Kita gunakan 'owner' karena field 'penanggung_jawab' adalah ID User yang mendaftar.
-        $companies = Company::with('admins') 
-                               ->orderBy('id', 'asc') // Tampilkan yang terbaru di atas
-                               ->get();
-
-        // Menggunakan variabel 'companies' untuk menampung semua data riwayat dan pending
-        return view('superadmin.approval-company', compact('companies')); // Menggunakan nama view yang sebelumnya kita sepakati
+        $companies = Company::with('admins') ->orderBy('id', 'asc')->get();
+        return view('superadmin.approval-company', compact('companies'));
     }
-
-    /**
-     * Proses persetujuan (Approve) perusahaan.
-     */
     public function approve(Company $company)
     {
         // 1. Validasi Status

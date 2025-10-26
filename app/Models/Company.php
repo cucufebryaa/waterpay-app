@@ -10,11 +10,12 @@ class Company extends Model
     use HasFactory;
     protected $table = 'tb_companies';
     protected $fillable = [
-        'name',
+        'nama_perusahaan',
         'no_hp',
         'alamat',
         'nama_bank',
         'no_rekening',
+        'username',
         'penanggung_jawab',
         'status'
     ];

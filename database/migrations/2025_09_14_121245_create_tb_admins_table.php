@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('tb_admins', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_lengakp_PJ');
+            $table->string('nama_lengkap')->nullable();
+            $table->string('username')->nullable();
             $table->string('alamat')->nullable();
             $table->string('email')->nullable();
             $table->string('no_hp')->nullable();
-            $table->string('username')->nullable();
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_company');
             $table->timestamps();
