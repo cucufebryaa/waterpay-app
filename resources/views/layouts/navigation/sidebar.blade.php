@@ -57,7 +57,7 @@
             <a href="{{ route('admin.petugas.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.petugas.index*') ? 'active' : '' }}">
                 <i class="bi bi-person-badge me-2"></i>Data Petugas
             </a>
-            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pelanggan.index*') ? 'active' : '' }}">
+            <a href="{{ route('admin.pelanggan.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pelanggan.index*') ? 'active' : '' }}">
                 <i class="bi bi-person-lines-fill me-2"></i>Data Pelanggan
             </a>
             <a href="#" class="list-group-item list-group-item-action">
