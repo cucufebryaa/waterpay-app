@@ -8,14 +8,14 @@ class Pelanggan extends Model
 {
     use HasFactory;
     protected $table = 'tb_pelanggans';
-    protected $fillable = ['name', 'alamat', 'no_hp', 'id_user', 'id_company'];
+    protected $fillable = ['nama', 'alamat', 'no_hp', 'id_user', 'id_company'];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    public function company()
+     public function company()
     {
         return $this->belongsTo(Company::class, 'id_company');
     }

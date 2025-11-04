@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Petugas')
+@section('title', 'Manajemen Petugas - Admin WaterPay')
 
 @section('content')
 <div class="container-fluid px-4">
