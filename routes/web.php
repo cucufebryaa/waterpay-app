@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\KeluhanController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\InformasiController;
 use App\Http\Controllers\Admin\StatusController;
+use App\Http\Controllers\Admin\HargaController;
+
 
 
 /*
@@ -59,8 +61,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/data-petugas', [PetugasController::class, 'index'])->name('petugas.index');
         Route::resource('petugas', PetugasController::class);
         Route::resource('pelanggan', PelangganController::class);
+        Route::resource('harga', HargaController::class);
         Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
-        Route::get('/pemakaian-air', [PemakaianAirController::class, 'index'])->name('pemakaian.index');
         Route::get('/pembayaran-pelanggan', [PembayaranController::class, 'index'])->name('pembayaran.index');
         Route::get('/keluhan-pelanggan', [KeluhanController::class, 'index'])->name('keluhan.index');
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');

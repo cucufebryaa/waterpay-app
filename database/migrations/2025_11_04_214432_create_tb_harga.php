@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('tb_harga', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_company')->constrained('tb_companies')->onDelete('cascade'); 
+            $table->string('nama_product');
+            $table->string('kode_product')->unique();
+            $table->enum('tipe', ['tunggal', 'paket'])->default('tunggal'); 
+            $table->decimal('harga_product', 10, 2);
+            $table->decimal('biaya_admin', 10, 2);
+            $table->decimal('denda', 10, 2);
             $table->timestamps();
         });
     }
