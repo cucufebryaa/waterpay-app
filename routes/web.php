@@ -9,15 +9,14 @@ use App\Http\Controllers\SuperAdmin\UserManagementController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\PetugasController;
 use App\Http\Controllers\Admin\PelangganController;
-use App\Http\Controllers\Admin\PemakaianAirController;
+use App\Http\Controllers\Admin\PemakaiController;
 use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\KeluhanController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\InformasiController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\HargaController;
-
-
+use App\Http\Controllers\PemakaianController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +61,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::resource('petugas', PetugasController::class);
         Route::resource('pelanggan', PelangganController::class);
         Route::resource('harga', HargaController::class);
+        Route::resource('pemakaian', PemakaianController::class);
         Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
         Route::get('/pembayaran-pelanggan', [PembayaranController::class, 'index'])->name('pembayaran.index');
         Route::get('/keluhan-pelanggan', [KeluhanController::class, 'index'])->name('keluhan.index');

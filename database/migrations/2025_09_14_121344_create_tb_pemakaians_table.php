@@ -17,8 +17,10 @@ return new class extends Migration
             $table->integer('meter_akhir');
             $table->string('foto');
             $table->integer('total_pakai');
+            $table->string('kd_product');
             $table->integer('tarif');
-            $table->unsignedBigInteger('id_petugas');
+            $table->unsignedBigInteger('id_company');
+            $table->unsignedBigInteger(column: 'id_petugas');
             $table->unsignedBigInteger('id_pelanggan');
             $table->timestamps();
 

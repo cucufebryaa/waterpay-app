@@ -16,11 +16,10 @@ class HargaController extends Controller
      */
     private function getCompanyId()
     {
-        // Cek relasi 'adminData' dan apakah 'id_company' ada
         if (Auth::user() && Auth::user()->admin && Auth::user()->admin->id_company) {
             return Auth::user()->admin->id_company;
         }
-        return null; // Kembalikan null jika tidak ditemukan
+        return null;
     }
 
     /**

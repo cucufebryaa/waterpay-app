@@ -63,7 +63,10 @@
             <a href="{{ route('admin.harga.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.harga.index*') ? 'active' : '' }}">
                 <i class="bi bi-cash-coin me-2"></i>Setting Harga
             </a>
-            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pemakaian.index*') ? 'active' : '' }}">
+            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.info.index*') ? 'active' : '' }}">
+                <i class="bi bi-info-circle me-2"></i>Set Informasi
+            </a>
+            <a href="{{ route('admin.pemakaian.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pemakaian.index*') ? 'active' : '' }}">
                 <i class="bi bi-droplet-half me-2"></i>Data Pemakaian
             </a>
             <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan.index*') ? 'active' : '' }}">
@@ -93,9 +96,9 @@
 
 
         {{-- =================================================== --}}
-        {{-- Menu Sharing (Admin, Petugas, Pelanggan)        --}}
+        {{-- Menu Sharing (Petugas, Pelanggan)        --}}
         {{-- =================================================== --}}
-        @if(in_array($userRole, ['admin', 'petugas', 'pelanggan']))
+        @if(in_array($userRole, ['petugas', 'pelanggan']))
             <a href="{{ route( $userRole . '.keluhan.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.keluhan.index*') ? 'active' : '' }}">
                 <i class="bi bi-exclamation-octagon me-2"></i>Keluhan
             </a>

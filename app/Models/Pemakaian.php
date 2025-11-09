@@ -8,7 +8,7 @@ class Pemakaian extends Model
 {
     use HasFactory;
     protected $table = 'tb_pemakaians';
-    protected $fillable = ['meter_awal', 'meter_akhir', 'foto', 'total_pakai', 'tarif', 'id_petugas', 'id_pelanggan'];
+    protected $fillable = ['meter_awal', 'meter_akhir', 'foto', 'total_pakai', 'kd_product', 'tarif', 'id_company', 'id_petugas', 'id_pelanggan'];
 
     public function petugas()
     {
@@ -23,5 +23,15 @@ class Pemakaian extends Model
     public function pembayaran()
     {
         return $this->hasOne(Pembayaran::class, 'id_pemakaian');
+    }
+
+    public function kode_product()
+    {
+        return $this->belongsTo(Harga::class, 'kd_product', 'kd_product');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class,'id_company');
     }
 }

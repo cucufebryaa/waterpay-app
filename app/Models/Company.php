@@ -35,6 +35,11 @@ class Company extends Model
         return $this->hasMany(Pelanggan::class, 'id_company');
     }
 
+    public function pemakaian()
+    {
+        return $this->hasMany(Pemakaian::class, 'id_company');
+    }
+
     public function informasi()
     {
         return $this->hasMany(Informasi::class, 'id_company');

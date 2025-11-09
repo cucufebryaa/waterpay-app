@@ -32,4 +32,9 @@ class Harga extends Model
         // Ganti 'App\Models\Company' jika path model Anda berbeda
         return $this->belongsTo(Company::class, 'id_company');
     }
+
+    public function pemakaian()
+    {
+        return $this->hasMany(pemakaian::class,'kd_product');
+    }
 }
