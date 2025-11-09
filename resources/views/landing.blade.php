@@ -135,7 +135,7 @@
                 {{-- Tombol WhatsApp --}}
                 <div class="d-grid">
                     {{-- PENTING: Ganti 6281234567890 dengan nomor WhatsApp Admin Anda --}}
-                    <a href="https://wa.me/6281234567890" class="btn btn-whatsapp btn-lg" target="_blank">
+                    <a href="https://wa.me/081226212203" class="btn btn-whatsapp btn-lg" target="_blank">
                         <i class="bi bi-whatsapp me-2"></i> 
                         Tekan untuk menghubungi admin
                     </a>

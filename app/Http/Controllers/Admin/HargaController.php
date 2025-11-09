@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Harga;
-// Hapus atau abaikan ini jika Anda tidak membuatnya:
-// use App\Models\Admin; 
 
 class HargaController extends Controller
 {
@@ -52,11 +50,12 @@ class HargaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_product'  => 'required|string|max:255',
-            'tipe'          => 'required|in:tunggal,paket',
-            'harga_product' => 'required|numeric|min:0',
-            'biaya_admin'   => 'required|numeric|min:0',
-            'denda'         => 'required|numeric|min:0',
+            'nama_product'      => 'required|string|max:255',
+            'tipe'              => 'required|in:tunggal,paket',
+            'harga_product'     => 'required|numeric|min:0',
+            'biaya_admin'       => 'required|numeric|min:0',
+            'denda'             => 'required|numeric|min:0',
+            'batas_waktu_denda' => 'nullable|date',
         ]);
 
         $id_company = $this->getCompanyId();
@@ -74,6 +73,7 @@ class HargaController extends Controller
             'harga_product' => $request->harga_product,
             'biaya_admin'   => $request->biaya_admin,
             'denda'         => $request->denda,
+            'batas_waktu_denda' => $request->batas_waktu_denda,
         ]);
 
         return redirect()->route('admin.harga.index')->with('success', 'Data harga berhasil ditambahkan.');
@@ -108,6 +108,7 @@ class HargaController extends Controller
             'harga_product' => 'required|numeric|min:0',
             'biaya_admin'   => 'required|numeric|min:0',
             'denda'         => 'required|numeric|min:0',
+            'batas_waktu_denda'=> 'nullable|date',
         ]);
 
         $id_company = $this->getCompanyId();
@@ -117,11 +118,12 @@ class HargaController extends Controller
 
         $harga = Harga::where('id_company', $id_company)->findOrFail($id);
         $harga->update([
-            'nama_product'  => $request->nama_product,
-            'tipe'          => $request->tipe,
-            'harga_product' => $request->harga_product,
-            'biaya_admin'   => $request->biaya_admin,
-            'denda'         => $request->denda,
+            'nama_product'      => $request->nama_product,
+            'tipe'              => $request->tipe,
+            'harga_product'     => $request->harga_product,
+            'biaya_admin'       => $request->biaya_admin,
+            'denda'             => $request->denda,
+            'batas_waktu_denda' => $request->batas_waktu_denda,
         ]);
 
         return redirect()->route('admin.harga.index')->with('success', 'Data harga berhasil diperbarui.');

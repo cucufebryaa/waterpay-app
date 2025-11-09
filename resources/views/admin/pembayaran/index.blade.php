@@ -1,6 +1,6 @@
 @extends('layouts.app') {{-- Menyesuaikan dengan layout Anda --}}
 
-@section('title', 'Manajemen Keluhan - Admin WaterPay')
+@section('title', 'Manajemen Pembayaran - Admin WaterPay')
 
 @section('content')
 <div class="container-fluid px-4">
@@ -9,7 +9,7 @@
     <div class="row g-3 my-2">
         <div class="col-12">
             <div class="p-3 bg-white shadow-sm rounded-3 text-center">
-                <h3 class="fw-bold mb-0 text-primary">MANAJEMEN KELUHAN PENGGUNA</h3>
+                <h3 class="fw-bold mb-0 text-primary">MANAJEMEN PEMBAYARAN</h3>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
         </div>
     @endif
     
-    {{-- Menampilkan SEMUA error validasi (untuk 'update' dari modal) --}}
+    {{-- Menampilkan SEMUA error validasi (untuk modal 'update') --}}
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> 
@@ -48,81 +48,76 @@
         <div class="col-12">
             <div class="p-4 bg-white shadow-sm rounded-3">
                 
-                {{-- TABEL DATA KELUHAN --}}
+                {{-- TABEL DATA PEMBAYARAN --}}
                 <div class="table-responsive">
-                    <table id="tabelKeluhan" class="table table-striped table-hover align-middle">
+                    <table id="tabelPembayaran" class="table table-striped table-hover align-middle">
                         <thead class="table-primary text-white">
                             <tr class="text-center align-middle">
                                 <th style="width: 5%;">ID</th>
                                 <th style="width: 15%;">Pelanggan</th>
-                                <th style="width: 25%;">Judul Keluhan</th>
-                                <th style="width: 15%;">Status</th>
-                                <th style="width: 15%;">Petugas Ditugaskan</th>
-                                <th style="width: 15%;">Tanggal Masuk</th>
+                                <th style="width: 15%;">ID Tagihan</th>
+                                <th style="width: 15%;">Tgl. Bayar</th>
+                                <th style="width: 15%;">Jumlah Bayar</th>
+                                <th style="width: 15%;">Metode</th>
+                                <th style="width: 10%;">Status</th>
                                 <th style="width: 10%;" class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($daftarKeluhan as $keluhan)
+                            @forelse ($dataPembayaran as $item)
                             <tr class="text-center align-middle">
-                                <td>{{ $keluhan->id }}</td>
+                                <td>{{ $item->id }}</td>
                                 
                                 {{-- Asumsi relasi 'pelanggan' dan punya field 'nama_lengkap' --}}
-                                <td class="text-start">{{ $keluhan->pelanggan->nama_lengkap ?? 'N/A' }}</td> 
+                                <td class="text-start">{{ $item->pelanggan->nama_lengkap ?? 'N/A' }}</td> 
                                 
-                                <td class="text-start">{{ Str::limit($keluhan->judul, 60) }}</td>
+                                {{-- Asumsi relasi 'tagihan' dan punya field 'id_tagihan' (atau 'nomor_tagihan') --}}
+                                <td><code>{{ $item->tagihan->nomor_tagihan ?? $item->id_tagihan ?? 'N/A' }}</code></td>
                                 
+                                {{-- Asumsi 'tanggal_bayar' adalah Carbon instance --}}
+                                <td>{{ $item->tanggal_bayar ? $item->tanggal_bayar->format('d M Y H:i') : 'N/A' }}</td>
+
+                                <td class="text-end fw-bold">Rp {{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
+                                
+                                <td>{{ $item->metode_pembayaran ?? 'N/A' }}</td>
+
                                 <td>
                                     @php
                                         $statusClass = 'bg-secondary'; // Default
-                                        if ($keluhan->status == 'Baru') $statusClass = 'bg-primary';
-                                        elseif ($keluhan->status == 'Ditugaskan') $statusClass = 'bg-info text-dark';
-                                        elseif ($keluhan->status == 'Diproses') $statusClass = 'bg-warning text-dark';
-                                        elseif ($keluhan->status == 'Selesai') $statusClass = 'bg-success';
-                                        elseif ($keluhan->status == 'Ditolak') $statusClass = 'bg-danger';
+                                        if ($item->status == 'Pending') $statusClass = 'bg-warning text-dark';
+                                        elseif ($item->status == 'Success') $statusClass = 'bg-success';
+                                        elseif ($item->status == 'Failed') $statusClass = 'bg-danger';
                                     @endphp
                                     <span class="badge rounded-pill {{ $statusClass }} py-2 px-3">
-                                        {{ $keluhan->status ?? 'Baru' }}
+                                        {{ $item->status ?? 'N/A' }}
                                     </span>
                                 </td>
-                                
-                                {{-- Asumsi relasi 'petugas' dan punya field 'nama' --}}
-                                <td>
-                                    @if ($keluhan->petugas)
-                                        <i class="bi bi-person-check-fill text-success"></i>
-                                        {{ $keluhan->petugas->nama ?? 'N/A' }}
-                                    @else
-                                        <span class="text-muted fst-italic">Belum Ditugaskan</span>
-                                    @endif
-                                </td>
-
-                                <td>{{ $keluhan->created_at->format('d M Y H:i') }}</td>
                                 
                                 <td class="text-center">
                                     <div class="d-flex flex-nowrap justify-content-center">
                                         
                                         {{-- Tombol Detail --}}
-                                        <button type="button" class="btn btn-sm btn-info me-1" title="Detail"
-                                                onclick="showDetailAlert({{ json_encode($keluhan) }})">
+                                        <button type="button" class="btn btn-sm btn-info me-1" title="Detail Pembayaran"
+                                                onclick="showDetailAlert({{ json_encode($item) }})">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                         
-                                        {{-- TOMBOL DELEGASI (dulu Edit) --}}
-                                        <button type="button" class="btn btn-sm btn-primary me-1" title="Delegasikan / Ubah Status"
-                                                onclick="showDelegasiModal({{ json_encode($keluhan) }})">
-                                            <i class="bi bi-send"></i>
+                                        {{-- TOMBOL KONFIRMASI (dulu Edit) --}}
+                                        <button type="button" class="btn btn-sm btn-warning me-1" title="Konfirmasi / Tolak Pembayaran"
+                                                onclick="showKonfirmasiModal({{ json_encode($item) }})">
+                                            <i class="bi bi-patch-check"></i>
                                         </button>
 
                                         {{-- Tombol Hapus --}}
-                                        <button type="button" class="btn btn-sm btn-danger" title="Hapus"
-                                                onclick="showDeleteAlert('{{ $keluhan->id }}', 'Keluhan #{{ $keluhan->id }}')">
+                                        <button type="button" class="btn btn-sm btn-danger" title="Hapus Data"
+                                                onclick="showDeleteAlert('{{ $item->id }}', 'Pembayaran #{{ $item->id }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
                                     
                                     {{-- Form Hapus (Tersembunyi) --}}
-                                    <form id="form-delete-{{ $keluhan->id }}" 
-                                          action="{{ route('admin.keluhan.destroy', $keluhan->id) }}" 
+                                    <form id="form-delete-{{ $item->id }}" 
+                                          action="{{ route('admin.pembayaran.destroy', $item->id) }}" 
                                           method="POST" style="display: none;">
                                         @csrf
                                         @method('DELETE')
@@ -131,7 +126,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">Belum ada data Keluhan.</td>
+                                <td colspan="8" class="text-center py-4 text-muted">Belum ada data Pembayaran.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -145,40 +140,39 @@
 
 {{-- 
 ==================================================================================
-MODAL DELEGASI & STATUS (UPDATE)
-(Menggantikan Modal Edit Harga)
+MODAL KONFIRMASI PEMBAYARAN (UPDATE)
 ==================================================================================
 --}}
-<div class="modal fade" id="modalDelegasi" tabindex="-1" aria-labelledby="modalDelegasiLabel" aria-hidden="true">
+<div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="modalKonfirmasiLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content shadow-lg border-0 rounded-3">
             
             {{-- Form action akan di-set oleh JS --}}
-            <form action="" method="POST" id="formDelegasi" class="needs-validation" novalidate>
+            <form action="" method="POST" id="formKonfirmasi" class="needs-validation" novalidate>
                 @csrf
                 @method('PUT')
                 
-                <div class="modal-header bg-primary text-white p-4">
-                    <h5 class="modal-title" id="modalDelegasiLabel"><i class="bi bi-send me-2"></i>Form Delegasi & Status Tiket</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-warning text-dark p-4">
+                    <h5 class="modal-title" id="modalKonfirmasiLabel"><i class="bi bi-patch-check me-2"></i>Form Konfirmasi Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 
                 <div class="modal-body p-4">
                    
-                   {{-- Info Tiket (Read-only) --}}
+                   {{-- Info Pembayaran (Read-only) --}}
                    <div class="mb-3 p-3 bg-light rounded-3 border">
                        <div class="row g-2">
                            <div class="col-md-6">
                                <label class="form-label fw-bold small text-muted">Pelanggan:</label>
-                               <input type="text" class="form-control" id="delegasi_pelanggan" readonly disabled>
+                               <input type="text" class="form-control" id="konfirmasi_pelanggan" readonly disabled>
                            </div>
                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">Tiket ID:</label>
-                                <input type="text" class="form-control" id="delegasi_id" readonly disabled>
+                                <label class="form-label fw-bold small text-muted">ID Pembayaran:</label>
+                                <input type="text" class="form-control" id="konfirmasi_id" readonly disabled>
                            </div>
                            <div class="col-12">
-                                <label class="form-label fw-bold small text-muted">Judul Keluhan:</label>
-                               <input type="text" class="form-control" id="delegasi_judul" readonly disabled>
+                                <label class="form-label fw-bold small text-muted">Jumlah Bayar:</label>
+                               <input type="text" class="form-control fw-bold text-success" id="konfirmasi_jumlah" readonly disabled style="font-size: 1.1rem;">
                            </div>
                        </div>
                    </div>
@@ -187,32 +181,23 @@ MODAL DELEGASI & STATUS (UPDATE)
 
                    {{-- Form Input (Tindakan Admin) --}}
                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="delegasi_id_petugas" class="form-label fw-bold">Tugaskan ke Petugas <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_petugas') is-invalid @enderror" id="delegasi_id_petugas" name="id_petugas" required>
-                                <option value="" disabled>Pilih Petugas...</option>
-                                {{-- Loop dari data $daftarPetugas yang dikirim Controller --}}
-                                @foreach ($daftarPetugas as $petugas)
-                                    <option value="{{ $petugas->id }}">
-                                        {{ $petugas->nama }} ({{ $petugas->jabatan ?? 'Petugas' }})
-                                    </option>
-                                @endforeach
+                        <div class="col-md-12">
+                            <label for="konfirmasi_status" class="form-label fw-bold">Ubah Status Pembayaran <span class="text-danger">*</span></label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="konfirmasi_status" name="status" required>
+                                <option value="" disabled>Pilih Status...</option>
+                                <option value="Pending">Pending (Tunda)</option>
+                                <option value="Success">Success (Konfirmasi & Terima)</option>
+                                <option value="Failed">Failed (Tolak Pembayaran)</option>
                             </select>
-                            @error('id_petugas')
+                            @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="delegasi_status" class="form-label fw-bold">Ubah Status <span class="text-danger">*</span></label>
-                            <select class="form-select @error('status') is-invalid @enderror" id="delegasi_status" name="status" required>
-                                <option value="Baru">Baru</option>
-                                <option value="Ditugaskan">Ditugaskan</option>
-                                <option value="Diproses">Diproses</option>
-                                <option value="Selesai">Selesai</option>
-                                <option value="Ditolak">Ditolak</option>
-                            </select>
-                             @error('status')
+                        <div class="col-12">
+                            <label for="konfirmasi_catatan_admin" class="form-label fw-bold">Catatan Admin (Opsional)</label>
+                            <textarea class="form-control @error('catatan_admin') is-invalid @enderror" id="konfirmasi_catatan_admin" name="catatan_admin" rows="3" placeholder="Contoh: Pembayaran ditolak karena bukti tidak valid."></textarea>
+                            @error('catatan_admin')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -222,7 +207,7 @@ MODAL DELEGASI & STATUS (UPDATE)
                 
                 <div class="modal-footer p-3 bg-light">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-2"></i>Simpan Penugasan</button>
+                    <button type="submit" class="btn btn-warning text-dark"><i class="bi bi-save me-2"></i>Simpan Status</button>
                 </div>
             </form>
 
@@ -236,7 +221,7 @@ MODAL DELEGASI & STATUS (UPDATE)
 {{-- 
 ==================================================================================
 CSS STYLING UNTUK POPUP SWEETALERT
-(Diambil dari template Harga Anda, tidak perlu diubah)
+(Diambil dari template Harga/Keluhan Anda)
 ==================================================================================
 --}}
 <style>
@@ -276,28 +261,31 @@ CSS STYLING UNTUK POPUP SWEETALERT
     }
     .detail-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .detail-item {
-        display: flex; justify-content: space-between; align-items: center;
+        display: flex; justify-content: space-between; align-items: flex-start; /* align-items-start untuk text panjang */
         padding-bottom: 0.75rem; border-bottom: 1px dashed #e9ecef;
     }
     .detail-item:last-child { border-bottom: 0; }
-    .detail-key { font-size: 0.9em; color: #6c757d; text-align: left; padding-right: 1rem; }
-    .detail-value { font-size: 0.95em; font-weight: 600; color: #212529; text-align: right; }
+    .detail-key { font-size: 0.9em; color: #6c757d; text-align: left; padding-right: 1rem; flex-shrink: 0; }
+    .detail-value { font-size: 0.95em; font-weight: 600; color: #212529; text-align: right; word-break: break-all; } /* word-break */
+    .detail-bukti-bayar {
+        text-align: center; padding-top: 1rem;
+    }
+    .detail-bukti-bayar img {
+        max-width: 100%; height: auto; max-height: 400px;
+        border-radius: 0.5rem; border: 1px solid #dee2e6;
+        cursor: zoom-in;
+    }
 </style>
 
 
 {{-- 
 ==================================================================================
 JAVASCRIPT UNTUK POPUP & MODAL
-(Disesuaikan untuk 'Keluhan')
+(Disesuaikan untuk 'Pembayaran')
 ==================================================================================
 --}}
 <script>
     
-    // Aktifkan juga DataTables untuk pencarian dan pagination jika mau
-    // $(document).ready(function() {
-    //     $('#tabelKeluhan').DataTable();
-    // });
-
     /**
      * FUNGSI HELPER (SAMA)
      * Membuat list data Key-Value
@@ -306,7 +294,7 @@ JAVASCRIPT UNTUK POPUP & MODAL
         let listHtml = '<div class="detail-list">';
         let hasData = false;
         for (const [key, value] of Object.entries(items)) {
-            if (!skipKeys.includes(key) && value !== null && value !== '') {
+            if (!skipKeys.includes(key) && value !== null && value !== '' && value !== undefined) {
                 hasData = true;
                 listHtml += `
                     <div class="detail-item">
@@ -324,55 +312,69 @@ JAVASCRIPT UNTUK POPUP & MODAL
     }
 
     /**
-     * FUNGSI POPUP DETAIL (Disesuaikan untuk Keluhan)
+     * FUNGSI HELPER FORMAT RUPIAH
      */
-    function showDetailAlert(keluhanData) {
+    const formatRupiah = (angka) => {
+         return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(angka);
+    };
+
+    /**
+     * FUNGSI POPUP DETAIL (Disesuaikan untuk Pembayaran)
+     */
+    function showDetailAlert(data) {
         
         // Objek untuk detail keluhan
-        const detailKeluhan = {
-            'ID Tiket': `<code>#${keluhanData.id}</code>`,
-            'Pelanggan': `<strong>${keluhanData.pelanggan ? keluhanData.pelanggan.nama_lengkap : 'N/A'}</strong>`,
-            'Judul': keluhanData.judul,
-            'Deskripsi Lengkap': `<div class="text-wrap" style="white-space: pre-wrap;">${keluhanData.deskripsi || 'Tidak ada deskripsi.'}</div>`,
-            'Tanggal Lapor': new Date(keluhanData.created_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })
+        const detailPembayaran = {
+            'ID Pembayaran': `<code>#${data.id}</code>`,
+            'Pelanggan': `<strong>${data.pelanggan ? data.pelanggan.nama_lengkap : 'N/A'}</strong>`,
+            'ID Tagihan': `<code>${data.tagihan ? (data.tagihan.nomor_tagihan || data.id_tagihan) : 'N/A'}</code>`,
+            'Jumlah Bayar': `<span class="fw-bold text-success">${formatRupiah(data.jumlah_bayar)}</span>`,
+            'Metode Bayar': data.metode_pembayaran || 'N/A',
+            'Tgl. Transaksi': data.tanggal_bayar ? new Date(data.tanggal_bayar).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) : 'N/A',
+            'Status Saat Ini': `<span class="fw-bold text-primary">${data.status}</span>`,
+            'Catatan Admin': data.catatan_admin || 'Tidak ada catatan.'
         };
-        
-        // Objek untuk status penugasan
-        const detailPenugasan = {
-            'Status Saat Ini': `<span class="fw-bold text-primary">${keluhanData.status}</span>`,
-            'Ditugaskan Kepada': `<strong>${keluhanData.petugas ? keluhanData.petugas.nama : 'Belum Ditugaskan'}</strong>`,
-            'Terakhir Diperbarui': new Date(keluhanData.updated_at).toLocaleString('id-ID', { timeStyle: 'short' })
-        };
+
+        // Buat HTML untuk bukti bayar
+        let buktiHtml = '<div class="info-card"><h5><i class="bi bi-card-image me-2"></i>Bukti Pembayaran</h5>';
+        if (data.bukti_bayar) {
+            // Asumsi bukti_bayar adalah URL gambar
+            buktiHtml += `
+                <div class="detail-bukti-bayar">
+                    <img src="${data.bukti_bayar}" alt="Bukti Pembayaran" 
+                         onerror="this.alt='Gagal memuat bukti'; this.src='https://placehold.co/400x300/eee/aaa?text=Bukti+Tidak+Valid';"
+                         onclick="window.open('${data.bukti_bayar}', '_blank')">
+                    <small class="text-muted d-block mt-2">Klik gambar untuk memperbesar</small>
+                </div>`;
+        } else {
+            buktiHtml += '<p class="text-muted m-0">Tidak ada bukti bayar yang diunggah.</p>';
+        }
+        buktiHtml += '</div>';
         
         // Buat HTML (layout 2 kolom)
         let htmlContent = `
             <div class="row g-3">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="info-card">
-                        <h5><i class="bi bi-file-earmark-text me-2"></i>Detail Keluhan</h5>
-                        ${createDetailList(detailKeluhan, ['deskripsi'])}
+                        <h5><i class="bi bi-file-earmark-text me-2"></i>Detail Transaksi</h5>
+                        ${createDetailList(detailPembayaran)}
                     </div>
                 </div>
-                <div class="col-lg-12 mt-3">
-                     <div class="info-card">
-                        <h5><i class="bi bi-person-check me-2"></i>Status & Penugasan</h5>
-                        ${createDetailList(detailPenugasan)}
-                    </div>
-                </div>
-                <div class="col-lg-12 mt-3">
-                     <div class="info-card">
-                        <h5><i class="bi bi-card-text me-2"></i>Deskripsi</h5>
-                        <p class="text-muted" style="white-space: pre-wrap;">${keluhanData.deskripsi || 'Tidak ada deskripsi.'}</p>
-                    </div>
+                <div class="col-lg-6">
+                    ${buktiHtml}
                 </div>
             </div>
         `;
 
         Swal.fire({
-            title: `<i class="bi bi-ticket-detailed me-2"></i> Detail Keluhan #${keluhanData.id}`,
+            title: `<i class="bi bi-wallet2 me-2"></i> Detail Pembayaran #${data.id}`,
             html: htmlContent,
             icon: null,
-            width: '800px', // Popup lebih lebar
+            width: '900px', // Popup lebih lebar
             showCloseButton: true,
             showConfirmButton: false,
             customClass: {
@@ -387,10 +389,10 @@ JAVASCRIPT UNTUK POPUP & MODAL
     /**
      * FUNGSI POPUP DELETE (Sama, hanya ganti variabel)
      */
-    function showDeleteAlert(keluhanId, keluhanName) {
+    function showDeleteAlert(bayarId, bayarName) {
         Swal.fire({
-            title: 'Hapus Keluhan?',
-            text: `Anda yakin ingin menghapus "${keluhanName}"? Tindakan ini tidak dapat dibatalkan!`,
+            title: 'Hapus Data Pembayaran?',
+            text: `Anda yakin ingin menghapus "${bayarName}"? Tindakan ini tidak dapat dibatalkan!`,
             icon: 'warning', 
             showCancelButton: true,
             confirmButtonText: 'Ya, Hapus!',
@@ -403,43 +405,39 @@ JAVASCRIPT UNTUK POPUP & MODAL
             buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('form-delete-' + keluhanId).submit();
+                document.getElementById('form-delete-' + bayarId).submit();
             }
         });
     }
 
     /**
-     * FUNGSI MODAL DELEGASI (Dulu Edit)
-     * Mengisi dan menampilkan modal delegasi
+     * FUNGSI MODAL KONFIRMASI (Dulu Edit/Delegasi)
      */
-    function showDelegasiModal(keluhanData) {
+    function showKonfirmasiModal(data) {
         
         // 1. Set Form Action
-        const form = document.getElementById('formDelegasi');
-        // 'keluhan.index' akan menghasilkan '.../keluhan'. Kita tambahkan '/' dan id
-        const baseUrl = "{{ rtrim(route('admin.keluhan.index'), '/') }}"; 
-        form.action = `${baseUrl}/${keluhanData.id}`;
+        const form = document.getElementById('formKonfirmasi');
+        const baseUrl = "{{ rtrim(route('admin.pembayaran.index'), '/') }}"; 
+        form.action = `${baseUrl}/${data.id}`;
         
         // 2. Populate Info Read-only
-        document.getElementById('delegasi_id').value = keluhanData.id || '';
-        document.getElementById('delegasi_pelanggan').value = keluhanData.pelanggan ? keluhanData.pelanggan.nama_lengkap : 'N/A';
-        document.getElementById('delegasi_judul').value = keluhanData.judul || '';
+        document.getElementById('konfirmasi_id').value = data.id || '';
+        document.getElementById('konfirmasi_pelanggan').value = data.pelanggan ? data.pelanggan.nama_lengkap : 'N/A';
+        document.getElementById('konfirmasi_jumlah').value = formatRupiah(data.jumlah_bayar);
         
         // 3. Populate Form Fields
-        // 'keluhanData.id_petugas' (misal: 5) akan otomatis terpilih di dropdown
-        document.getElementById('delegasi_id_petugas').value = keluhanData.id_petugas || ''; 
-        // 'keluhanData.status' (misal: "Diproses") akan otomatis terpilih
-        document.getElementById('delegasi_status').value = keluhanData.status || 'Baru';
+        document.getElementById('konfirmasi_status').value = data.status || 'Pending';
+        document.getElementById('konfirmasi_catatan_admin').value = data.catatan_admin || '';
         
         // 4. Tampilkan Modal
-        var myModal = new bootstrap.Modal(document.getElementById('modalDelegasi'));
+        var myModal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
         myModal.show();
     }
 
 
-    // {{-- Script standar Bootstrap Validation --}}
+    {{-- Script standar Bootstrap Validation --}}
     (function () {
-      'use strict'
+      'use"use strict'
       var forms = document.querySelectorAll('.needs-validation')
       Array.prototype.slice.call(forms)
         .forEach(function (form) {
@@ -452,15 +450,6 @@ JAVASCRIPT UNTUK POPUP & MODAL
           }, false)
         })
     })()
-
-    /*
-        Jika terjadi error validasi saat UPDATE (dari modal delegasi), 
-        banner error di atas tabel akan muncul. 
-        Anda bisa menambahkan skrip di sini untuk membuka kembali modal
-        secara otomatis jika diperlukan, tapi itu lebih kompleks karena 
-        Anda perlu tahu ID keluhan mana yang gagal di-update. 
-        Untuk saat ini, banner error sudah cukup informatif.
-    */
 
 </script>
 @endpush

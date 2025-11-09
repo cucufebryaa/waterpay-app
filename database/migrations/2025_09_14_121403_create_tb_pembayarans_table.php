@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('total_tagihan');
             $table->unsignedBigInteger('id_pelanggan');
             $table->unsignedBigInteger('id_pemakaian');
+            $table->unsignedBigInteger('id_company');
             $table->timestamps();
 
             $table->foreign('id_pelanggan')->references('id')->on('tb_pelanggans');

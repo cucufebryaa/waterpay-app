@@ -63,14 +63,17 @@
             <a href="{{ route('admin.harga.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.harga.index*') ? 'active' : '' }}">
                 <i class="bi bi-cash-coin me-2"></i>Setting Harga
             </a>
-            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.info.index*') ? 'active' : '' }}">
+            <a href="{{ route('admin.informasi.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.informasi.index*') ? 'active' : '' }}">
                 <i class="bi bi-info-circle me-2"></i>Set Informasi
             </a>
             <a href="{{ route('admin.pemakaian.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pemakaian.index*') ? 'active' : '' }}">
                 <i class="bi bi-droplet-half me-2"></i>Data Pemakaian
             </a>
-            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan.index*') ? 'active' : '' }}">
-                <i class="bi bi-file-earmark-bar-graph me-2"></i>Laporan
+            <a href="{{ route('admin.keluhan.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.keluhan.index*') ? 'active' : '' }}">
+                <i class="bi bi-file-earmark-bar-graph me-2"></i>Keluhan
+            </a>
+            <a href="{{ route('admin.pembayaran.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.pembayaran.index*') ? 'active' : '' }}">
+                <i class="bi bi-receipt me-2"></i>Data Pembayaran
             </a>
         @endif
 
@@ -86,9 +89,9 @@
 
 
         {{-- =================================================== --}}
-        {{-- Menu Sharing (Admin & Pelanggan)                --}}
+        {{-- Menu Sharing (Pelanggan)                --}}
         {{-- =================================================== --}}
-        @if(in_array($userRole, ['admin', 'pelanggan']))
+        @if(in_array($userRole, ['pelanggan']))
             <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('*.tagihan.index*') ? 'active' : '' }}">
                 <i class="bi bi-receipt me-2"></i>Tagihan/Pembayaran
             </a>

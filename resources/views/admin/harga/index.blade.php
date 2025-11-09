@@ -61,12 +61,13 @@
                         <thead class="table-primary text-white">
                             <tr class="text-center align-middle">
                                 <th style="width: 5%;">ID</th>
-                                <th style="width: 15%;">Kode</th>
-                                <th style="width: 25%;">Nama Produk/Paket</th>
+                                <th style="width: 10%;">Kode</th>
+                                <th style="width: 20%;">Nama Produk/Paket</th>
                                 <th style="width: 10%;">Tipe</th>
                                 <th style="width: 15%;">Harga/M³</th>
                                 <th style="width: 10%;">Biaya Admin</th>
                                 <th style="width: 10%;">Denda</th>
+                                <th style="width: 10%;">Batas Waktu Denda </th>
                                 <th style="width: 10%;" class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -84,6 +85,7 @@
                                 <td class="text-end">Rp {{ number_format($item->harga_product, 0, ',', '.') }}</td>
                                 <td class="text-end">Rp {{ number_format($item->biaya_admin, 0, ',', '.') }}</td>
                                 <td class="text-end">Rp {{ number_format($item->denda, 0, ',', '.') }}</td>
+                                <td class="text-center">{{ $item->batas_waktu_denda }}</td>
                                 <td class="text-center">
                                     <div class="d-flex flex-nowrap justify-content-center">
                                         
@@ -198,6 +200,13 @@ MODAL 1: TAMBAH HARGA (CREATE)
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-12">
+                            <label for="batas_waktu_denda" class="form-label fw-bold">Batas Waktu Denda <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control @error('batas_waktu_denda') is-invalid @enderror" id="batas_waktu_denda" name="batas_waktu_denda" value="{{ old('batas_waktu_denda') }}" required>
+                            @error('batas_waktu_denda')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                     </div>
                 </div>
@@ -267,6 +276,10 @@ MODAL 2: EDIT HARGA (UPDATE)
                                 <input type="number" step="1" class="form-control" id="edit_denda" name="denda" required>
                             </div>
                         </div>
+                         <div class="col-md-12">
+                            <label for="edit_batas_waktu_denda" class="form-label fw-bold">Batas Waktu Denda <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="edit_batas_waktu_denda" name="batas_waktu_denda" required>
+                        </div>
                     </div>
                 </div>
                 
@@ -282,15 +295,7 @@ MODAL 2: EDIT HARGA (UPDATE)
 @endsection
 
 @push('scripts')
-{{-- Memuat SweetAlert2 (pastikan sudah ada di layout) --}}
-{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
-{{-- 
-==================================================================================
-CSS UNTUK POPUP
-(Ini SAMA PERSIS dengan yang Anda berikan, tidak perlu diubah)
-==================================================================================
---}}
 <style>
     /* 1. CSS UTAMA POPUP (SAMA) */
     .popup-profesional {
@@ -396,6 +401,7 @@ JAVASCRIPT UNTUK POPUP & MODAL
             'Denda Keterlambatan': formatRupiah(hargaData.denda),
             'ID Perusahaan': hargaData.id_company,
             'ID Harga': hargaData.id,
+            'batas_waktu_denda': hargaData.batas_waktu_denda,
         };
         
         // Buat HTML (layout 1 kolom sederhana)
@@ -463,6 +469,7 @@ JAVASCRIPT UNTUK POPUP & MODAL
         document.getElementById('edit_harga_product').value = parseFloat(hargaData.harga_product) || 0;
         document.getElementById('edit_biaya_admin').value = parseFloat(hargaData.biaya_admin) || 0;
         document.getElementById('edit_denda').value = parseFloat(hargaData.denda) || 0;
+        document.getElementById('edit_batas_waktu_denda').value = hargaData.batas_waktu_denda || '';
         
         // 3. Tampilkan Modal
         var myModal = new bootstrap.Modal(document.getElementById('modalEditHarga'));
@@ -492,7 +499,6 @@ JAVASCRIPT UNTUK POPUP & MODAL
         })
     })()
 
-    // Script untuk menampilkan kembali modal CREATE jika ada error validasi
     @if ($errors->any())
         {{-- Hanya tampilkan modal jika error berasal dari field form TAMBAH --}}
         @if ($errors->has('nama_product') || $errors->has('tipe') || $errors->has('harga_product') || $errors->has('biaya_admin') || $errors->has('denda'))

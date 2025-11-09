@@ -8,7 +8,13 @@ class Pelanggan extends Model
 {
     use HasFactory;
     protected $table = 'tb_pelanggans';
-    protected $fillable = ['nama', 'alamat', 'no_hp', 'id_user', 'id_company'];
+    protected $fillable = [
+        'nama',
+        'alamat',
+        'no_hp',
+        'id_user',
+        'id_company'
+    ];
 
     public function user()
     {

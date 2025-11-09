@@ -16,7 +16,9 @@ return new class extends Migration
             $table->date('tanggal');
             $table->text('keluhan');
             $table->string('status');
+            $table->unsignedBigInteger('id_petugas');
             $table->unsignedBigInteger('id_pelanggan');
+            $table->unsignedBigInteger('id_company');
             $table->timestamps();
 
             $table->foreign('id_pelanggan')->references('id')->on('tb_pelanggans');

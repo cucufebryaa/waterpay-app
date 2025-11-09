@@ -3,11 +3,22 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Harga extends Model
 {
     use HasFactory;
     protected $table = 'tb_harga';
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            // Cek jika 'batas_waktu_denda' belum diisi saat proses create
+            if (empty($model->batas_waktu_denda)) {
+                // Set nilainya ke tanggal 10 bulan ini
+                $model->batas_waktu_denda = Carbon::now()->setDay(10)->toDateString();
+            }
+        });
+    }
     protected $fillable = [
         'id_company',
         'nama_product',
@@ -16,6 +27,7 @@ class Harga extends Model
         'harga_product',
         'biaya_admin',
         'denda',
+        'batas_waktu_denda',
     ];
     protected $casts = [
         'harga_product' => 'decimal:2',

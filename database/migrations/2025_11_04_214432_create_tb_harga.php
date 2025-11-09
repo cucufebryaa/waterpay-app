@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('harga_product', 10, 2);
             $table->decimal('biaya_admin', 10, 2);
             $table->decimal('denda', 10, 2);
+            $table->date('batas_waktu_denda')->nullable();
             $table->timestamps();
         });
     }
