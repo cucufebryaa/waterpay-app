@@ -86,11 +86,11 @@ class KeluhanController extends Controller
                 'required',
                 // Pastikan id_petugas yang dikirim ada di database
                 // dan milik perusahaan yang sama
-                Rule::exists('petugas', 'id')->where(function ($query) use ($id_company) {
+                Rule::exists('tb_petugas', 'id')->where(function ($query) use ($id_company) {
                     $query->where('id_company', $id_company);
                 }),
             ],
-            'status' => 'required|string|in:Baru,Ditugaskan,Diproses,Selesai,Ditolak',
+            'status' => 'required|string|in:Open,Delegated,OnProgress,Completed,Rejected',
         ]);
 
         // Cari keluhan yang spesifik, pastikan milik perusahaan ini

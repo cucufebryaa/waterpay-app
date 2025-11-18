@@ -9,6 +9,8 @@ use App\Http\Controllers\SuperAdmin\UserManagementController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\PetugasController;
 use App\Http\Controllers\Admin\PelangganController;
+use App\Http\Controllers\Pelanggan\PelangganTransaction;
+use App\Http\Controllers\Pelanggan\DashboardPelanggan;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\KeluhanController;
@@ -16,22 +18,30 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\HargaController;
 use App\Http\Controllers\PemakaianController;
+use App\Models\Pelanggan;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+// route untuk dashboard landing
 Route::get('/', function () {
     return view('landing');
 });
+
+// route untuk login dan register
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate']);
     Route::get('/register-admin', [RegisterController::class, 'showRegistrationForm'])->name('register.admin');
     Route::post('/register-admin', [RegisterController::class, 'store'])->name('register.admin.store');
 });
+
+// route untuk logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+// route untuk menu superadmiin
 Route::middleware(['auth'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('chart.data');
@@ -51,6 +61,7 @@ Route::middleware(['auth'])->prefix('superadmin')->name('superadmin.')->group(fu
     Route::delete('/management-users/{user}', [UserManagementController::class, 'destroy'])->name('management-users.destroy');
 });
 
+// route untuk menu admin
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/status', [StatusController::class, 'index'])->name('status');
     Route::get('/admin/{admin}/login-as', [AdminController::class, 'loginAs'])->name('admin.login-as');
@@ -65,46 +76,23 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::resource('keluhan', KeluhanController::class);
         Route::resource('pembayaran', PembayaranController::class);
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-    
-
     });
 });
 
+// route untuk menu petugas
 Route::middleware(['role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
     Route::get('/dashboard', [PetugasController::class, 'index'])->name('dashboard');
     Route::get('/chart-data', [PetugasController::class, 'getChartData'])->name('chart.data');
-    Route::get('/pemakaian-air', function () {
-        return "Halaman Input Pemakaian Air (Petugas)";
-    })->name('pemakaian.index');
-    
-    Route::get('/keluhan', function () {
-        return "Halaman Keluhan (Petugas)";
-    })->name('keluhan.index');
-    
-    Route::get('/informasi', function () {
-        return "Halaman Informasi (Petugas)";
-    })->name('informasi.index');
-
-    Route::get('/pengaturan', function () {
-        return "Halaman Pengaturan (Petugas)";
-    })->name('pengaturan.index');
+    Route::get('/pemakaian-air', function () {return "Halaman Input Pemakaian Air (Petugas)";})->name('pemakaian.index');
+    Route::get('/keluhan', function () {return "Halaman Keluhan (Petugas)";})->name('keluhan.index');
+    Route::get('/informasi', function () {return "Halaman Informasi (Petugas)";})->name('informasi.index');
+    Route::get('/pengaturan', function () {return "Halaman Pengaturan (Petugas)";})->name('pengaturan.index');
 });
-Route::middleware(['role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
-    Route::get('/dashboard', [PelangganController::class, 'index'])->name('dashboard');
-    Route::get('/chart-data', [PelangganController::class, 'getChartData'])->name('chart.data');
-    Route::get('/tagihan', function () {
-        return "Halaman Tagihan (Pelanggan)";
-    })->name('tagihan.index');
-    
-    Route::get('/keluhan', function () {
-        return "Halaman Keluhan (Pelanggan)";
-    })->name('keluhan.index');
-    
-    Route::get('/informasi', function () {
-        return "Halaman Informasi (Pelanggan)";
-    })->name('informasi.index');
 
-    Route::get('/pengaturan', function () {
-        return "Halaman Pengaturan (Pelanggan)";
-    })->name('pengaturan.index');
+// route untuk menu pelanggan
+Route::middleware(['role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+    Route::get('/dashboard', [DashboardPelanggan::class, 'index'])->name('dashboard');
+    Route::get('/create-keluhan', [PelangganTransaction::class,'create'])->name('keluhan.create');
+    Route::post('/post-keluhan', [PelangganTransaction::class,'store'])->name('keluhan.store');
+    Route::get('/informasi', function () {return "Halaman Informasi (Pelanggan)";})->name('informasi.index');
 });

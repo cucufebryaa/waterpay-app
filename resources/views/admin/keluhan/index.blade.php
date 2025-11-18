@@ -55,7 +55,7 @@
                             <tr class="text-center align-middle">
                                 <th style="width: 5%;">ID</th>
                                 <th style="width: 15%;">Pelanggan</th>
-                                <th style="width: 25%;">Judul Keluhan</th>
+                                <th style="width: 25%;">Keluhan</th>
                                 <th style="width: 15%;">Status</th>
                                 <th style="width: 15%;">Petugas Ditugaskan</th>
                                 <th style="width: 15%;">Tanggal Masuk</th>
@@ -68,9 +68,9 @@
                                 <td>{{ $keluhan->id }}</td>
                                 
                                 {{-- Asumsi relasi 'pelanggan' dan punya field 'nama_lengkap' --}}
-                                <td class="text-start">{{ $keluhan->pelanggan->nama_lengkap ?? 'N/A' }}</td> 
+                                <td class="text-start">{{ $keluhan->pelanggan->nama ?? 'N/A' }}</td> 
                                 
-                                <td class="text-start">{{ Str::limit($keluhan->judul, 60) }}</td>
+                                <td class="text-start">{{ $keluhan->keluhan }}</td>
                                 
                                 <td>
                                     @php
@@ -177,7 +177,7 @@ MODAL DELEGASI & STATUS (UPDATE)
                                 <input type="text" class="form-control" id="delegasi_id" readonly disabled>
                            </div>
                            <div class="col-12">
-                                <label class="form-label fw-bold small text-muted">Judul Keluhan:</label>
+                                <label class="form-label fw-bold small text-muted">Keluhan:</label>
                                <input type="text" class="form-control" id="delegasi_judul" readonly disabled>
                            </div>
                        </div>
@@ -206,11 +206,11 @@ MODAL DELEGASI & STATUS (UPDATE)
                         <div class="col-md-6">
                             <label for="delegasi_status" class="form-label fw-bold">Ubah Status <span class="text-danger">*</span></label>
                             <select class="form-select @error('status') is-invalid @enderror" id="delegasi_status" name="status" required>
-                                <option value="Baru">Baru</option>
-                                <option value="Ditugaskan">Ditugaskan</option>
-                                <option value="Diproses">Diproses</option>
-                                <option value="Selesai">Selesai</option>
-                                <option value="Ditolak">Ditolak</option>
+                                <option value="Open">Open</option>
+                                <option value="Delegated">Delegated</option>
+                                <option value="OnProgress">OnProgress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Rejected">Rejected</option>
                             </select>
                              @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -422,8 +422,8 @@ JAVASCRIPT UNTUK POPUP & MODAL
         
         // 2. Populate Info Read-only
         document.getElementById('delegasi_id').value = keluhanData.id || '';
-        document.getElementById('delegasi_pelanggan').value = keluhanData.pelanggan ? keluhanData.pelanggan.nama_lengkap : 'N/A';
-        document.getElementById('delegasi_judul').value = keluhanData.judul || '';
+        document.getElementById('delegasi_pelanggan').value = keluhanData.pelanggan ? keluhanData.pelanggan.nama : 'N/A';
+        document.getElementById('delegasi_judul').value = keluhanData.keluhan || '';
         
         // 3. Populate Form Fields
         // 'keluhanData.id_petugas' (misal: 5) akan otomatis terpilih di dropdown

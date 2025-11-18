@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('tanggal');
             $table->text('keluhan');
-            $table->string('status');
+            $table->string('status')->default('open'));
             $table->unsignedBigInteger('id_petugas');
             $table->unsignedBigInteger('id_pelanggan');
             $table->unsignedBigInteger('id_company');
