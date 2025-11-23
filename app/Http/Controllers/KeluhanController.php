@@ -31,10 +31,9 @@ class KeluhanController extends Controller
             return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan perusahaan manapun.');
         }
 
-        $daftarKeluhan = Keluhan::where('id_company', $id_company)
-                            ->with(['pelanggan','petugas'])
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+        $daftarKeluhan = Keluhan::with(['pelanggan', 'petugas', 'maintenance'])
+                        ->orderBy('created_at', 'desc')
+                        ->get();
         
         $daftarPetugas = Petugas::where('id_company', $id_company)->get();
 

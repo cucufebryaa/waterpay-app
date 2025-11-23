@@ -23,7 +23,7 @@
                         <p class="text-muted">Data identitas Anda otomatis terisi oleh sistem.</p>
                     </div>
 
-                    <form action="{{ route('pelanggan.keluhan.store') }}" method="POST">
+                    <form action="{{ route('pelanggan.transaction.store') }}" method="POST">
                         @csrf
                         
                         <div class="row g-4">

@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Keluhan;
-use App\Models\Pelanggan;
 use Carbon\Carbon;
 class PelangganTransaction extends Controller
 {
@@ -103,5 +103,56 @@ class PelangganTransaction extends Controller
         // 4. Redirect dengan Pesan Sukses
         // Sesuaikan route redirect-nya, misal ke halaman riwayat keluhan atau dashboard
         return redirect()->route('pelanggan.dashboard')->with('success', 'Keluhan Anda berhasil dikirim dan statusnya kini Open.');
+    }
+    public function edit()
+    {
+        // Ambil user yang sedang login
+        $user = Auth::user();
+        
+        // Ambil data pelanggan terkait (asumsi relasi 'pelanggan' sudah ada di model User)
+        // Jika relasi belum ada, pastikan di Model User ada: public function pelanggan() { return $this->hasOne(Pelanggan::class, 'id_user'); }
+        $pelanggan = $user->pelanggan;
+
+        return view('pelanggan.profile', compact('user', 'pelanggan'));
+    }
+
+    // 2. Memproses Update Data
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        $pelanggan = $user->pelanggan;
+
+        // Validasi Input
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id, // Cek unik kecuali punya sendiri
+            'email'    => 'required|email|max:255|unique:users,email,' . $user->id,
+            'no_hp'    => 'required|numeric',
+            'alamat'   => 'required|string',
+            'password' => 'nullable|string|min:6|confirmed', // Password opsional
+        ]);
+
+        // Update Tabel Users (Akun)
+        $userData = [
+            'username' => $request->username,
+            'email'    => $request->email,
+        ];
+
+        // Cek jika user mengisi password baru
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($userData);
+
+        // Update Tabel Pelanggans (Data Diri)
+        // Pastikan field ini ada di $fillable model Pelanggan
+        $pelanggan->update([
+            'nama'   => $request->name,
+            'no_hp'  => $request->no_hp,
+            'alamat' => $request->alamat,
+        ]);
+
+        return redirect()->route('pelanggan.profile.edit')->with('success', 'Profil berhasil diperbarui!');
     }
 }

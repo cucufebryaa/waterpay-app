@@ -75,11 +75,11 @@
                                 <td>
                                     @php
                                         $statusClass = 'bg-secondary'; // Default
-                                        if ($keluhan->status == 'Baru') $statusClass = 'bg-primary';
-                                        elseif ($keluhan->status == 'Ditugaskan') $statusClass = 'bg-info text-dark';
-                                        elseif ($keluhan->status == 'Diproses') $statusClass = 'bg-warning text-dark';
-                                        elseif ($keluhan->status == 'Selesai') $statusClass = 'bg-success';
-                                        elseif ($keluhan->status == 'Ditolak') $statusClass = 'bg-danger';
+                                        if ($keluhan->status == 'open') $statusClass = 'bg-primary';
+                                        elseif ($keluhan->status == 'delegated') $statusClass = 'bg-info text-dark';
+                                        elseif ($keluhan->status == 'onprogress') $statusClass = 'bg-warning text-dark';
+                                        elseif ($keluhan->status == 'completed') $statusClass = 'bg-success';
+                                        elseif ($keluhan->status == 'rejected') $statusClass = 'bg-danger';
                                     @endphp
                                     <span class="badge rounded-pill {{ $statusClass }} py-2 px-3">
                                         {{ $keluhan->status ?? 'Baru' }}
@@ -100,30 +100,30 @@
                                 
                                 <td class="text-center">
                                     <div class="d-flex flex-nowrap justify-content-center">
-                                        
-                                        {{-- Tombol Detail --}}
-                                        <button type="button" class="btn btn-sm btn-info me-1" title="Detail"
+                                        <button type="button" class="btn btn-sm btn-info me-1" title="Detail Tiket"
                                                 onclick="showDetailAlert({{ json_encode($keluhan) }})">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        
-                                        {{-- TOMBOL DELEGASI (dulu Edit) --}}
-                                        <button type="button" class="btn btn-sm btn-primary me-1" title="Delegasikan / Ubah Status"
-                                                onclick="showDelegasiModal({{ json_encode($keluhan) }})">
-                                            <i class="bi bi-send"></i>
-                                        </button>
-
-                                        {{-- Tombol Hapus --}}
+                                        @if (!in_array($keluhan->status, ['onprogress', 'completed', 'rejected']))
+                                            <button type="button" class="btn btn-sm btn-primary me-1" title="Delegasikan Petugas"
+                                                    onclick="showDelegasiModal({{ json_encode($keluhan) }})">
+                                                <i class="bi bi-send"></i>
+                                            </button>
+                                        @endif
+                                        @if ($keluhan->status == 'completed')
+                                            <button type="button" class="btn btn-sm btn-success me-1" title="Lihat Bukti Pengerjaan"
+                                                    onclick="showMaintenanceResult({{ json_encode($keluhan) }})">
+                                                <i class="bi bi-images"></i>
+                                            </button>
+                                        @endif
                                         <button type="button" class="btn btn-sm btn-danger" title="Hapus"
                                                 onclick="showDeleteAlert('{{ $keluhan->id }}', 'Keluhan #{{ $keluhan->id }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
-                                    
-                                    {{-- Form Hapus (Tersembunyi) --}}
                                     <form id="form-delete-{{ $keluhan->id }}" 
-                                          action="{{ route('admin.keluhan.destroy', $keluhan->id) }}" 
-                                          method="POST" style="display: none;">
+                                        action="{{ route('admin.keluhan.destroy', $keluhan->id) }}" 
+                                        method="POST" style="display: none;">
                                         @csrf
                                         @method('DELETE')
                                     </form>
@@ -206,11 +206,11 @@ MODAL DELEGASI & STATUS (UPDATE)
                         <div class="col-md-6">
                             <label for="delegasi_status" class="form-label fw-bold">Ubah Status <span class="text-danger">*</span></label>
                             <select class="form-select @error('status') is-invalid @enderror" id="delegasi_status" name="status" required>
-                                <option value="Open">Open</option>
-                                <option value="Delegated">Delegated</option>
-                                <option value="OnProgress">OnProgress</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Rejected">Rejected</option>
+                                <option value="open">Open</option>
+                                <option value="delegated">Delegated</option>
+                                <option value="onprogress">OnProgress</option>
+                                <option value="completed">Completed</option>
+                                <option value="rejected">Rejected</option>
                             </select>
                              @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -331,10 +331,9 @@ JAVASCRIPT UNTUK POPUP & MODAL
         // Objek untuk detail keluhan
         const detailKeluhan = {
             'ID Tiket': `<code>#${keluhanData.id}</code>`,
-            'Pelanggan': `<strong>${keluhanData.pelanggan ? keluhanData.pelanggan.nama_lengkap : 'N/A'}</strong>`,
-            'Judul': keluhanData.judul,
-            'Deskripsi Lengkap': `<div class="text-wrap" style="white-space: pre-wrap;">${keluhanData.deskripsi || 'Tidak ada deskripsi.'}</div>`,
-            'Tanggal Lapor': new Date(keluhanData.created_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })
+            'Pelanggan': `<strong>${keluhanData.pelanggan ? keluhanData.pelanggan.nama : 'N/A'}</strong>`,
+            'Keluhan': `<div class="text-wrap" style="white-space: pre-wrap;">${keluhanData.keluhan || 'Tidak ada deskripsi.'}</div>`,
+            'Tanggal Pengajuan': new Date(keluhanData.created_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })
         };
         
         // Objek untuk status penugasan
@@ -357,12 +356,6 @@ JAVASCRIPT UNTUK POPUP & MODAL
                      <div class="info-card">
                         <h5><i class="bi bi-person-check me-2"></i>Status & Penugasan</h5>
                         ${createDetailList(detailPenugasan)}
-                    </div>
-                </div>
-                <div class="col-lg-12 mt-3">
-                     <div class="info-card">
-                        <h5><i class="bi bi-card-text me-2"></i>Deskripsi</h5>
-                        <p class="text-muted" style="white-space: pre-wrap;">${keluhanData.deskripsi || 'Tidak ada deskripsi.'}</p>
                     </div>
                 </div>
             </div>
@@ -453,14 +446,67 @@ JAVASCRIPT UNTUK POPUP & MODAL
         })
     })()
 
-    /*
-        Jika terjadi error validasi saat UPDATE (dari modal delegasi), 
-        banner error di atas tabel akan muncul. 
-        Anda bisa menambahkan skrip di sini untuk membuka kembali modal
-        secara otomatis jika diperlukan, tapi itu lebih kompleks karena 
-        Anda perlu tahu ID keluhan mana yang gagal di-update. 
-        Untuk saat ini, banner error sudah cukup informatif.
-    */
+    function showMaintenanceResult(keluhanData) {
+        // 1. Cek apakah data maintenance ada
+        if (!keluhanData.maintenance) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Data Belum Tersedia',
+                text: 'Data pengerjaan tidak ditemukan di database (mungkin belum di-load controller).',
+            });
+            return;
+        }
+
+        const m = keluhanData.maintenance;
+        
+        // 2. Siapkan URL Foto
+        // Pastikan path storage sesuai konfigurasi Laravel kamu
+        const fotoUrl = "{{ asset('storage') }}/" + m.foto;
+
+        // 3. Format Tanggal Selesai
+        const tglSelesai = new Date(m.tanggal).toLocaleString('id-ID', { 
+            dateStyle: 'full', timeStyle: 'short' 
+        });
+
+        // 4. Buat HTML Konten
+        let htmlContent = `
+            <div class="text-start">
+                <div class="mb-3 p-3 bg-light border rounded">
+                    <label class="small text-muted fw-bold">TANGGAL PENYELESAIAN</label>
+                    <div class="fw-bold text-dark">${tglSelesai}</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="small text-muted fw-bold">KETERANGAN PETUGAS</label>
+                    <div class="alert alert-success border-0 shadow-sm text-dark mt-1">
+                        <i class="bi bi-check-circle-fill me-2"></i> ${m.deskripsi}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="small text-muted fw-bold mb-2">FOTO BUKTI LAPANGAN</label>
+                    <div class="text-center bg-dark rounded p-2">
+                        ${m.foto 
+                            ? `<img src="${fotoUrl}" class="img-fluid rounded" style="max-height: 400px;" alt="Bukti Pengerjaan">` 
+                            : '<span class="text-white-50 fst-italic">Tidak ada foto bukti.</span>'}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 5. Tampilkan SweetAlert
+        Swal.fire({
+            title: `<i class="bi bi-clipboard-check me-2"></i> Hasil Pengerjaan`,
+            html: htmlContent,
+            width: '600px',
+            showConfirmButton: true,
+            confirmButtonText: 'Tutup',
+            customClass: {
+                popup: 'popup-profesional', // Menggunakan style css yang sudah ada
+                confirmButton: 'btn btn-secondary'
+            }
+        });
+    }
 
 </script>
 @endpush

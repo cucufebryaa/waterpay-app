@@ -27,7 +27,7 @@
                 <i class="bi bi-speedometer2 me-2"></i>Dashboard
             </a>
         @elseif($userRole == 'petugas')
-            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('petugas.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('petugas.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('petugas.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2 me-2"></i>Dashboard
             </a>
         @elseif($userRole == 'pelanggan')
@@ -82,8 +82,12 @@
         {{-- Menu Khusus Petugas                             --}}
         {{-- =================================================== --}}
         @if($userRole == 'petugas')
+            <a href="{{ route($userRole . '.maintenance.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('petugas.maintenance*') ? 'active' : '' }}">
+                <i class="bi bi-tools me-2"></i>Task Maintenance
+            </a>
+
             <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('petugas.pemakaian.index*') ? 'active' : '' }}">
-                <i class="bi bi-droplet-half me-2"></i>Pemakaian Air
+                <i class="bi bi-speedometer2 me-2"></i>Input Data Pemakaian
             </a>
         @endif
 
@@ -92,24 +96,15 @@
         {{-- Menu Sharing (Pelanggan)                --}}
         {{-- =================================================== --}}
         @if(in_array($userRole, ['pelanggan']))
-            <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('*.tagihan.index*') ? 'active' : '' }}">
+            <a href="{{ route($userRole . '.profile.edit') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.profile.edit') ? 'active' : '' }}">
                 <i class="bi bi-person me-2"></i>Kelola Profile
             </a>
+
             <a href="#" class="list-group-item list-group-item-action {{ request()->routeIs('*.tagihan.index*') ? 'active' : '' }}">
                 <i class="bi bi-receipt me-2"></i>Tagihan/Pembayaran
             </a>
-        @endif
-
-
-        {{-- =================================================== --}}
-        {{-- Menu Sharing (Petugas, Pelanggan)        --}}
-        {{-- =================================================== --}}
-        @if(in_array($userRole, ['petugas', 'pelanggan']))
-            <a href="{{ route( $userRole . '.keluhan.create') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.keluhan.create*') ? 'active' : '' }}">
+            <a href="{{ route( $userRole . '.transaction.create') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.keluhan.create*') ? 'active' : '' }}">
                 <i class="bi bi-exclamation-octagon me-2"></i>Keluhan
-            </a>
-            <a href="{{ route( $userRole . '.informasi.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('*.informasi.index*') ? 'active' : '' }}">
-                <i class="bi bi-info-circle me-2"></i>Informasi
             </a>
         @endif
     </div>

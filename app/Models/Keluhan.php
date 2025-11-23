@@ -31,4 +31,8 @@ class Keluhan extends Model
     {
         return $this->belongsTo(Company::class,'id_company');
     }
+    public function maintenance()
+    {
+        return $this->hasOne(Maintenance::class, 'keluhan_id');
+    }
 }

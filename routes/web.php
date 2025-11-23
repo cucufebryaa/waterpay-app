@@ -18,7 +18,8 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\HargaController;
 use App\Http\Controllers\PemakaianController;
-use App\Models\Pelanggan;
+use App\Http\Controllers\Petugas\DashboardPetugas;
+use App\Http\Controllers\Petugas\taskMaintenanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,18 +82,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 // route untuk menu petugas
 Route::middleware(['role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
-    Route::get('/dashboard', [PetugasController::class, 'index'])->name('dashboard');
-    Route::get('/chart-data', [PetugasController::class, 'getChartData'])->name('chart.data');
-    Route::get('/pemakaian-air', function () {return "Halaman Input Pemakaian Air (Petugas)";})->name('pemakaian.index');
-    Route::get('/keluhan', function () {return "Halaman Keluhan (Petugas)";})->name('keluhan.index');
-    Route::get('/informasi', function () {return "Halaman Informasi (Petugas)";})->name('informasi.index');
-    Route::get('/pengaturan', function () {return "Halaman Pengaturan (Petugas)";})->name('pengaturan.index');
+    Route::get('dashboard', [DashboardPetugas::class,'index'])->name('dashboard');
+    Route::resource('maintenance', taskMaintenanceController::class);
+    Route::patch('/maintenance/{id}/start', [taskMaintenanceController::class, 'startProgress'])->name('maintenance.start');
 });
 
 // route untuk menu pelanggan
 Route::middleware(['role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::get('/dashboard', [DashboardPelanggan::class, 'index'])->name('dashboard');
-    Route::get('/create-keluhan', [PelangganTransaction::class,'create'])->name('keluhan.create');
-    Route::post('/post-keluhan', [PelangganTransaction::class,'store'])->name('keluhan.store');
-    Route::get('/informasi', function () {return "Halaman Informasi (Pelanggan)";})->name('informasi.index');
+    Route::get('/profile', [PelangganTransaction::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [PelangganTransaction::class, 'update'])->name('profile.update');
+    Route::resource('transaction',PelangganTransaction::class);
 });
