@@ -29,16 +29,15 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan perusahaan manapun.');
         }
 
-        // Ambil data pembayaran, muat relasi 'pelanggan' dan 'tagihan'
-        // Ini penting agar kita bisa menampilkan nama pelanggan dan info tagihan di tabel
+        // PERBAIKAN DI SINI:
+        // Ganti 'tagihan' menjadi 'pemakaian' sesuai nama fungsi relasi di Model Pembayaran
         $dataPembayaran = Pembayaran::where('id_company', $id_company)
-                            ->with(['pelanggan', 'tagihan']) // Asumsi: Model Pembayaran punya relasi ->pelanggan() dan ->tagihan()
+                            ->with(['pelanggan', 'pemakaian']) 
                             ->orderBy('created_at', 'desc')
                             ->get();
 
         return view('admin.pembayaran.index', compact('dataPembayaran'));
     }
-
     /**
      * Show the form for creating a new resource.
      */

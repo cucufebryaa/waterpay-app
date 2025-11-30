@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\HargaController;
 use App\Http\Controllers\PemakaianController;
 use App\Http\Controllers\Petugas\DashboardPetugas;
 use App\Http\Controllers\Petugas\taskMaintenanceController;
+use App\Http\Controllers\Petugas\PetugasPemakaianController;
+use App\Http\Controllers\Pelanggan\PelangganTagihanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +78,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::resource('informasi', InformasiController::class);
         Route::resource('keluhan', KeluhanController::class);
         Route::resource('pembayaran', PembayaranController::class);
-        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });
 });
 
@@ -85,6 +86,7 @@ Route::middleware(['role:petugas'])->prefix('petugas')->name('petugas.')->group(
     Route::get('dashboard', [DashboardPetugas::class,'index'])->name('dashboard');
     Route::resource('maintenance', taskMaintenanceController::class);
     Route::patch('/maintenance/{id}/start', [taskMaintenanceController::class, 'startProgress'])->name('maintenance.start');
+    Route::resource('pemakaian', PetugasPemakaianController::class);
 });
 
 // route untuk menu pelanggan
@@ -93,4 +95,6 @@ Route::middleware(['role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->
     Route::get('/profile', [PelangganTransaction::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [PelangganTransaction::class, 'update'])->name('profile.update');
     Route::resource('transaction',PelangganTransaction::class);
+    Route::get('/tagihan', [PelangganTagihanController::class, 'index'])->name('tagihan.index');
+    Route::post('/tagihan/{id}/pay', [PelangganTagihanController::class, 'createPayment'])->name('tagihan.pay');
 });

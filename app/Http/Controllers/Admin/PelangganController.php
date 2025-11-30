@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Pelanggan;
+use App\Models\Harga; // Tambahkan Model Harga
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Exception;
@@ -21,27 +22,40 @@ class PelangganController extends Controller
              abort(403, 'Data Admin Perusahaan tidak ditemukan.');
         }
         $companyId = Auth::user()->admin->id_company; 
+        
+        // 1. Ambil daftar Produk/Harga untuk dropdown pilihan di Modal Create/Edit
+        $products = Harga::where('id_company', $companyId)->get();
+
         $search = $request->get('search');
+        
+        // Load relasi 'kode_product' agar admin bisa lihat pelanggan ini pakai tarif apa
         $pelangganQuery = Pelanggan::where('id_company', $companyId)
-                               ->with('user');
+                               ->with(['user', 'kode_product']); 
+        
         if ($search) {
             $searchTerm = '%' . $search . '%';
             $pelangganQuery->where(function($query) use ($searchTerm) {
-                $query->where('name', 'like', $searchTerm)
+                $query->where('nama', 'like', $searchTerm)
+                      ->orWhere('no_hp', 'like', $searchTerm) // Tambahan: cari by no_hp
                       ->orWhereHas('user', function ($subQuery) use ($searchTerm) {
-                          $subQuery->where('username', 'like', $searchTerm);
+                          $subQuery->where('username', 'like', $searchTerm)
+                                   ->orWhere('nik', 'like', $searchTerm);
                       });
             });
         }
         $pelanggan = $pelangganQuery->latest()->get(); 
-        return view('admin.kelola-pengguna', compact('pelanggan', 'search'));
+        
+        // Kirim variable $products ke view
+        return view('admin.kelola-pengguna', compact('pelanggan', 'search', 'products'));
     }
+
     public function store(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
             'no_hp' => 'required|string|max:20|unique:tb_pelanggans,no_hp',
+            'id_product' => 'required|exists:tb_harga,id', // Validasi Wajib Pilih Produk
             'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|string|email|max:255|unique:users,email',
             'nik' => 'required|string|digits:16|unique:users,nik',
@@ -80,6 +94,7 @@ class PelangganController extends Controller
                 'no_hp' => $request->no_hp,
                 'id_user' => $user->id,
                 'id_company' => $companyId,
+                'id_product' => $request->id_product, // Simpan ID Product
             ]);
             DB::commit();
 
@@ -104,9 +119,11 @@ class PelangganController extends Controller
         if (!$user) {
             return redirect()->route('admin.pelanggan.index')->with('error', 'Data user terkait tidak ditemukan.');
         }
+        
         $request->validate([
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
+            'id_product' => 'required|exists:tb_harga,id', // Validasi Wajib Pilih Produk saat update
             'no_hp' => ['required','string','max:20', Rule::unique('tb_pelanggans')->ignore($pelanggan->id),],
             'username' => ['required','string','max:255',Rule::unique('users')->ignore($user->id),],
             'email' => ['required','string','email','max:255', Rule::unique('users')->ignore($user->id),],
@@ -126,11 +143,12 @@ class PelangganController extends Controller
             }
             $user->update($userData);
 
-            // 5. Update data Pelanggan
+            // 5. Update data Pelanggan termasuk golongan produknya
             $pelanggan->update([
                 'nama' => $request->nama,
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
+                'id_product' => $request->id_product, // Update ID Product
             ]);
 
             // 6. Jika sukses, commit

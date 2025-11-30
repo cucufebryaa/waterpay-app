@@ -33,16 +33,11 @@ class PemakaianController extends Controller
         if (is_null($id_company)) {
             return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan perusahaan manapun.');
         }
-
-        // Ambil data pemakaian, diurutkan dari terbaru
-        // Eager Loading (with) sangat penting untuk performa!
         $daftarRiwayat = Pemakaian::where('id_company', $id_company)
                             ->with(['pelanggan', 'petugas', 'pembayaran', 'kode_product']) // Ambil semua relasi
                             ->orderBy('created_at', 'desc') // Tampilkan yang terbaru di atas
                             ->paginate(20); // Gunakan paginate untuk data yang banyak
 
-        // Tampilkan view
-        // Pastikan nama view sudah benar (misal: 'admin.pemakaian.index')
         return view('admin.pemakaian.index', compact('daftarRiwayat'));
     }
 
