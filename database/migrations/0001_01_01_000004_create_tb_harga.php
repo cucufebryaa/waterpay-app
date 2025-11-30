@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('tb_harga', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_company')->constrained('tb_companies')->onDelete('cascade'); 
+            $table->string('nama_product');
+            $table->string('kode_product')->unique();
+            $table->enum('tipe', ['tunggal', 'paket'])->default('tunggal'); 
+            $table->decimal('harga_product', 10, 2);
+            $table->decimal('biaya_admin', 10, 2);
+            $table->decimal('denda', 10, 2);
+            $table->date('batas_waktu_denda')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('tb_harga');
+    }
+};

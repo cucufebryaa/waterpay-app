@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Ganti dengan nama master layout Admin Anda yang benar --}}
+@extends('layouts.app')
 
 @section('title', 'Data Petugas')
 

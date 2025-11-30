@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('no_hp')->nullable();
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_company');
+            $table->unsignedBigInteger('id_product');
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users');
             $table->foreign('id_company')->references('id')->on('tb_companies');
+            $table->foreign('id_product')->references('id')->on('tb_harga');
         });
     }
 

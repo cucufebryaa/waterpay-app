@@ -13,14 +13,20 @@ return new class extends Migration
     {
         Schema::create('tb_pembayarans', function (Blueprint $table) {
             $table->id();
-            $table->date('tanggal');
-            $table->integer('abonemen');
-            $table->integer('denda')->nullable();
-            $table->integer('total_tagihan');
+            $table->string('xendit_id')->nullable()->index(); 
+            $table->string('xendit_external_id')->nullable();
+            $table->string('payment_channel')->nullable(); // Misal: BRI, OVO
+            $table->string('payment_url')->nullable(); // Link bayar
+            $table->decimal('jumlah_tagihan', 15, 2); // Tagihan asli
+            $table->decimal('denda', 15, 2)->default(0); // Nominal denda saat dibayar
+            $table->decimal('biaya_admin', 15, 2)->default(0); // Biaya admin gateway
+            $table->decimal('total_bayar', 15, 2); // Total yang harus dibayar user
+            $table->enum('status', ['pending', 'success', 'failed', 'expired'])->default('pending');
+            $table->dateTime('tanggal_bayar')->nullable();
             $table->unsignedBigInteger('id_pelanggan');
             $table->unsignedBigInteger('id_pemakaian');
+            $table->unsignedBigInteger('id_company');
             $table->timestamps();
-
             $table->foreign('id_pelanggan')->references('id')->on('tb_pelanggans');
             $table->foreign('id_pemakaian')->references('id')->on('tb_pemakaians');
         });

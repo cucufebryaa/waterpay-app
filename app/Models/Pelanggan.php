@@ -8,14 +8,22 @@ class Pelanggan extends Model
 {
     use HasFactory;
     protected $table = 'tb_pelanggans';
-    protected $fillable = ['name', 'alamat', 'no_hp', 'id_user', 'id_company'];
+    
+    protected $fillable = [
+        'nama',
+        'alamat',
+        'no_hp',
+        'id_user',
+        'id_company',
+        'id_product' // <--- PENTING: Tambahkan ini agar bisa disimpan/diedit
+    ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    public function company()
+     public function company()
     {
         return $this->belongsTo(Company::class, 'id_company');
     }
@@ -33,5 +41,9 @@ class Pelanggan extends Model
     public function pemakaian()
     {
         return $this->hasMany(Pemakaian::class, 'id_pelanggan');
+    }
+    public function kode_product()
+    {
+        return $this->belongsTo(Harga::class, 'id_product', 'id');
     }
 }

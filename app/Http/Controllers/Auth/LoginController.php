@@ -12,28 +12,19 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        // 1. Validasi input
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
-
-        // 2. Menyiapkan kredensial & mengizinkan login via username atau email
         $loginField = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         
         $credentials = [
             $loginField => $request->username,
             'password' => $request->password
         ];
-
-        // 3. Mencoba untuk login
         if (Auth::attempt($credentials, $request->filled('remember'))) {
-            // Jika berhasil, regenerate session untuk keamanan
             $request->session()->regenerate();
-
-            // 4. Arahkan berdasarkan role
             $role = Auth::user()->role;
-            
             switch ($role) {
                 case 'superadmin':
                     return redirect()->intended('/superadmin/dashboard');
@@ -44,12 +35,9 @@ class LoginController extends Controller
                 case 'pelanggan':
                     return redirect()->intended('/pelanggan/dashboard');
                 default:
-                    // Jika role tidak dikenal, arahkan ke halaman utama
                     return redirect()->intended('/');
             }
         }
-
-        // 5. Jika login gagal
         return back()->with('error', 'Username atau Password salah!');
     }
     public function logout(Request $request)
