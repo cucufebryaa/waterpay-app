@@ -175,7 +175,7 @@
                     <thead>
                         <tr>
                             <th class="ps-4">Perusahaan</th>
-                            <th>Kontak</th>
+                            <th>Email</th>
                             <th>Bank & Rekening</th>
                             <th>Penanggung Jawab</th>
                             <th>Tgl Daftar</th>

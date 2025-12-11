@@ -77,7 +77,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::resource('pemakaian', PemakaianController::class);
         Route::resource('informasi', InformasiController::class);
         Route::resource('keluhan', KeluhanController::class);
-        Route::resource('pembayaran', PembayaranController::class);
+        Route::resource('pembayaran', PembayaranController::class)->names([
+            'index' => 'pembayaran.index',
+    ]);
+    Route::get('pembayaran/export/pdf', [PembayaranController::class, 'exportPdf'])->name('pembayaran.export-pdf');
     });
 });
 

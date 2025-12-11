@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Keluhan;
-use Carbon\Carbon;
+use App\Models\Pemakaian; // WAJIB
+use App\Models\Pembayaran; // WAJIB
+//use \Carbon\Carbon
+//use Carbon\CarbonPeriod;
+
 class PelangganTransaction extends Controller
 {
     public function index()
@@ -27,7 +31,7 @@ class PelangganTransaction extends Controller
             'pemakaianBulanIni'  => 15, // dalam m³
             'pemakaianBulanLalu' => 12, // dalam m³
             'tagihanBulanIni'    => 75000, // dalam Rupiah
-            'jatuhTempo'         => Carbon::now()->addDays(5), // 5 hari dari sekarang
+            'jatuhTempo'         => \Carbon\Carbon::now()->addDays(5), // 5 hari dari sekarang
             'company'            => $perusahaan -> nama_perusahaan,
             'nama_pelanggan'     => $nama_pelanggan,
         ];
@@ -37,13 +41,13 @@ class PelangganTransaction extends Controller
                 'id' => 1,
                 'judul' => 'Perbaikan Pipa di Area Mawar',
                 'isi' => 'Akan ada pemadaman air terjadwal pada tanggal 20 November 2025 di area Mawar... (klik untuk detail)',
-                'tanggal' => Carbon::parse('2025-11-15')
+                'tanggal' => \Carbon\Carbon::parse('2025-11-15')
             ],
             [
                 'id' => 2,
                 'judul' => 'Promo Pembayaran Digital',
                 'isi' => 'Dapatkan cashback 10% untuk pembayaran melalui e-wallet... (klik untuk detail)',
-                'tanggal' => Carbon::parse('2025-11-10')
+                'tanggal' => \Carbon\Carbon::parse('2025-11-10')
             ]
         ];
 
@@ -92,7 +96,7 @@ class PelangganTransaction extends Controller
 
         // 3. Simpan ke Database
         Keluhan::create([
-            'tanggal'      => Carbon::now(),          // Otomatis tanggal & jam sekarang
+            'tanggal'      => \Carbon\Carbon::now(),          // Otomatis tanggal & jam sekarang
             'keluhan'      => $request->isi_keluhan,  // Dari input textarea
             'status'       => 'open',                 // DEFAULT STATUS: OPEN
             'id_pelanggan' => $pelanggan->id,         // Ambil ID Pelanggan dari Auth

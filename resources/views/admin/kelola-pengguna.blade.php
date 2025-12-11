@@ -528,14 +528,14 @@
                             <span class="badge bg-light text-primary border border-primary">
                                 {{ $item->kode_product->kode_product }}
                             </span>
-                            <div class="small mt-1 text-muted">{{ Str::limit($item->kode_product->nama_product, 20) }}</div>
+                            <div class="small mt-1 text-muted">{{ \Illuminate\Support\Str::limit($item->kode_product->nama_product, 20) }}</div>
                         @else
                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger">
                                 Belum Diset
                             </span>
                         @endif
                     </td>
-                    <td class="text-start">{{ Str::limit($item->alamat, 30) }}</td>
+                    <td class="text-start">{{ \Illuminate\Support\Str::limit($item->alamat, 30) }}</td>
                     <td class="text-center">{{ $item->no_hp }}</td>
                     <td>
                         <div class="action-buttons">

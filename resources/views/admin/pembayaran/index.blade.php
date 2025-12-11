@@ -105,6 +105,11 @@
     </div>
 
     <!-- STATS CARDS (Opsional: Hitung di View untuk ringkasan cepat) -->
+    <div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('admin.pembayaran.export-pdf') }}" class="btn btn-primary">
+        <i class="bi bi-file-pdf"></i> Cetak Laporan (PDF)
+    </a>
+    </div>
     <div class="row g-3 mb-4">
         @php
             $totalUang = $dataPembayaran->where('status', 'success')->sum('total_bayar');

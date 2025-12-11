@@ -205,7 +205,7 @@
                                     <small class="text-primary fw-bold" style="font-size: 0.75rem;">ID: {{ $pelanggan->no_pelanggan }}</small>
                                     <h5 class="card-title fw-bold text-dark mt-1 mb-1">{{ $pelanggan->nama }}</h5>
                                     <p class="text-muted small mb-0">
-                                        <i class="bi bi-geo-alt me-1"></i> {{ Str::limit($pelanggan->alamat, 35) }}
+                                        <i class="bi bi-geo-alt me-1"></i> {{ Illuminate\Support\Str::limit($pelanggan->alamat, 35) }}
                                     </p>
                                 </div>
 

@@ -461,7 +461,7 @@
                 <tr>
                     <td class="text-center">{{ $keluhan->id }}</td>
                     <td class="text-start">{{ $keluhan->pelanggan->nama ?? 'N/A' }}</td>
-                    <td class="text-start">{{ Str::limit($keluhan->keluhan, 80) }}</td>
+                    <td class="text-start">{{ \Illuminate\Support\Str::limit($keluhan->keluhan, 80) }}</td>
                     <td class="text-center">
                         @php
                             $statusClass = 'badge-secondary';
