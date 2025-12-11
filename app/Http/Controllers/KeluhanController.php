@@ -31,12 +31,13 @@ class KeluhanController extends Controller
             return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan perusahaan manapun.');
         }
 
-        $daftarKeluhan = Keluhan::with(['pelanggan', 'petugas', 'maintenance'])
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        $daftarKeluhan = Keluhan::where('id_company', $id_company) // <-- TAMBAHKAN BARIS INI
+                                ->with(['pelanggan', 'petugas']) // 'maintenance' dihapus jika tidak ada relasi di Model Keluhan
+                                ->orderBy('created_at', 'desc')
+                                ->get();
         
-        $daftarPetugas = Petugas::where('id_company', $id_company)->get();
-
+        $daftarPetugas = Petugas::where('id_company', $id_company)->get(); // Ini sudah benar
+        
         return view('admin.keluhan.index', compact('daftarKeluhan', 'daftarPetugas'));
     }
 
@@ -89,7 +90,7 @@ class KeluhanController extends Controller
                     $query->where('id_company', $id_company);
                 }),
             ],
-            'status' => 'required|string|in:Open,Delegated,OnProgress,Completed,Rejected',
+            'status' => 'required|string|in:open,delegated,onprogress,completed,rejected',
         ]);
 
         // Cari keluhan yang spesifik, pastikan milik perusahaan ini

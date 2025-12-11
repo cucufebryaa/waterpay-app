@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pembayaran;
 use App\Models\Pemakaian;
+use Barryvdh\Dompdf\Facade\Pdf;
 
 
 class PembayaranController extends Controller
@@ -128,4 +129,40 @@ class PembayaranController extends Controller
 
         return redirect()->route('admin.pembayaran.index')->with('success', 'Data Pembayaran #' . $pembayaran->id . ' berhasil dihapus.');
     }
-}
+
+    public function exportPdf()
+    {
+        $id_company = $this->getCompanyId();
+
+        if (is_null($id_company)) {
+            return redirect()->back()->with('error', 'Aksi tidak diizinkan.');
+        }
+
+        // 1. Ambil data
+        $dataPembayaran = Pembayaran::where('id_company', $id_company)
+                            ->with(['pelanggan', 'pemakaian']) 
+                            ->orderBy('tanggal_bayar', 'desc') 
+                            ->get();
+
+        // 2. Siapkan data statistik
+        $totalUang = $dataPembayaran->where('status', 'success')->sum('total_bayar');
+        $totalSukses = $dataPembayaran->where('status', 'success')->count();
+        $totalPending = $dataPembayaran->where('status', 'pending')->count();
+
+        // 3. Muat view menggunakan Helper app('dompdf.wrapper')
+        // Ini adalah perubahan krusial.
+        $pdf = app('dompdf.wrapper')->loadView('admin.pembayaran.laporan_pdf', [
+            'dataPembayaran' => $dataPembayaran,
+            'totalUang' => $totalUang,
+            'totalSukses' => $totalSukses,
+            'totalPending' => $totalPending,
+            'tanggalCetak' => now(),
+        ]);
+
+        // Atur ukuran kertas
+        $pdf->setPaper('A4', 'landscape');
+        
+        // 4. Unduh file PDF
+        return $pdf->stream('Laporan_Pembayaran_' . now()->format('Ymd_His') . '.pdf');
+    }
+};

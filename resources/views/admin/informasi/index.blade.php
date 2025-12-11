@@ -429,7 +429,7 @@
                     <td class="text-center">
                         {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d F Y') : 'N/A' }}
                     </td>
-                    <td class="text-start">{{ Str::limit($item->pesan, 100) }}</td>
+                    <td class="text-start">{{ Illuminate\Support\Str::limit($item->pesan, 100) }}</td>
                     <td>
                         <div class="action-buttons">
                             <button type="button" 

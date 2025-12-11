@@ -230,7 +230,7 @@
             <div class="col-lg-6 order-1 order-lg-2 mb-5 mb-lg-0 text-center">
                 <!-- Gunakan Ilustrasi 3D/Modern -->
                 <!-- IMAGE REPLACEMENT: Link sebelumnya broken, diganti placeholder aman -->
-                <img src={{ asset('images/hero.jpg') }} alt="Waterpay App" class="img-fluid" style="max-width: 90%; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1)); border-radius: 20px;">
+                <img src={{ asset('images/logo.jpg') }} alt="Waterpay App" class="img-fluid" style="max-width: 90%; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1)); border-radius: 20px;">
             </div>
         </div>
     </div>
@@ -298,7 +298,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <!-- IMAGE REPLACEMENT: Link sebelumnya broken, diganti placeholder aman -->
-                    <img src={{ asset('images/hero.jpg') }} alt="Analytics" class="img-fluid rounded-4">
+                    <img src={{ asset('images/logo.jpg') }} alt="Analytics" class="img-fluid rounded-4">
                 </div>
                 <div class="col-lg-6 ps-lg-5">
                     <div class="badge bg-primary bg-opacity-10 text-primary mb-3 px-3 py-2 rounded-pill fw-bold">KHUSUS PAMS</div>

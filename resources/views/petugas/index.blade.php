@@ -445,7 +445,7 @@
                             </div>
                         </td>
                         <td>
-                            <div class="complaint-text">{{ Str::limit($task->keluhan, 60) }}</div>
+                            <div class="complaint-text">{{ Illuminate\Support\Str::limit($task->keluhan, 60) }}</div>
                         </td>
                         <td class="text-center">
                             @if($task->status == 'delegated')

@@ -19,11 +19,11 @@ class taskMaintenanceController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $petugas = $user->petugas;
-        $tasks = Keluhan::where('id_petugas', $petugas->id)
-                        ->whereIn('status', ['delegated', 'onprogress'])
-                        ->with('pelanggan') // Load data pelanggan
-                        ->orderBy('created_at', 'asc') // Yang lama dikerjakan dulu
+        $idPetugas = $user->petugas->id;
+        $tasks = Keluhan::where('id_petugas', $idPetugas)
+                        ->whereIn('status', ['open', 'delegated', 'onprogress'])
+                        ->with('pelanggan')
+                        ->orderBy('created_at', 'desc')
                         ->get();
 
         return view('petugas.index', compact('tasks'));

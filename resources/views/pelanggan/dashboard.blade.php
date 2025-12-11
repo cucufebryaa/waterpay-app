@@ -583,7 +583,7 @@
                     </td>
                     <td>
                         <div class="complaint-text" title="{{ $keluhan->keluhan }}">
-                            {{ Str::limit($keluhan->keluhan, 80) }}
+                            {{ \Illuminate\Support\Str::limit($keluhan->keluhan, 80) }}
                         </div>
                     </td>
                     <td>

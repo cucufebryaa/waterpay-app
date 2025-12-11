@@ -321,7 +321,7 @@
             <i class="bi bi-wallet2"></i>
         </div>
         <div class="metric-content">
-            <div class="metric-label">Pembayaran Bulan Ini</div>
+            <div class="metric-label">Pembayaran Lunas Bulan Ini</div>
             <div class="metric-value value-info">
                 @if(is_numeric($pembayaranBulanIni))
                     Rp {{ number_format($pembayaranBulanIni, 0, ',', '.') }}
@@ -351,21 +351,81 @@
 </div>
 
 <!-- Chart Section -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="chart-section">
     <div class="chart-header">
-        <h5 class="chart-title">
-            <i class="bi bi-graph-up-arrow"></i>
-            Grafik Operasional Bulanan
-        </h5>
+        <h5 class="chart-title"><i class="bi bi-graph-up-arrow"></i>Grafik Laporan Bulanan</h5>
     </div>
-    
     <div class="chart-body">
-        <div class="chart-placeholder">
-            <i class="bi bi-bar-chart-line"></i>
-            <p>Area untuk Chart/Tabel Data Operasional</p>
-        </div>
+        <canvas id="financialOperationalChart" style="max-height: 450px; width: 100%;"></canvas>
     </div>
 </div>
+
+<script>
+    // Ambil data dari Laravel Blade (Real-Time Data)
+    const months = @json($months);
+    const dataLunas = @json($pembayaranBulanIni);
+    const dataTunggakan = @json($totalTunggakan);
+
+    const ctx = document.getElementById('financialOperationalChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar', // Bar chart untuk perbandingan
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Pembayaran Lunas (Rp)',
+                    data: dataLunas,
+                    backgroundColor: 'rgba(40, 167, 69, 0.7)', // Hijau (Lunas)
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Total Tagihan Tertunggak (Rp)',
+                    data: dataTunggakan,
+                    backgroundColor: 'rgba(220, 53, 69, 0.7)', // Merah (Tunggakan)
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Nominal (Rp)'
+                    },
+                    ticks: {
+                        // Format mata uang Rupiah
+                        callback: function(value, index, ticks) {
+                        // Pastikan nilai adalah angka
+                        if (typeof value === 'number') {
+                            // Menggunakan toLocaleString dengan locale 'id-ID' untuk format Indonesia
+                            // style: 'currency' -> Menambahkan simbol mata uang
+                            // currency: 'IDR' -> Menetapkan mata uang Rupiah
+                            // maximumFractionDigits: 0 -> Menghilangkan angka desimal
+                            
+                            return value.toLocaleString('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                minimumFractionDigits: 0, // Pastikan tidak ada desimal
+                                maximumFractionDigits: 0  // Pastikan tidak ada desimal
+                            });
+                            
+                        }
+                        return value;   
+                    }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 <!-- Quick Stats (Optional - bisa dihapus jika tidak perlu) -->
 {{-- 
