@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail; 
-use App\Mail\RegistrationSuccessful;
+// use Illuminate\Support\Facades\Mail; // Dihapus/Komentar
+// use App\Mail\RegistrationSuccessful; // Dihapus/Komentar
 
 class RegisterController extends Controller
 {
@@ -37,8 +37,6 @@ class RegisterController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // dd( $validated );
-
         // 2. Gunakan Transaksi Database
         DB::beginTransaction();
 
@@ -48,12 +46,11 @@ class RegisterController extends Controller
                 'email' => $validated['email'],
                 'username' => $validated['username'],
                 'password' => Hash::make($validated['password']),
-                'role' => 'admin', // Role default adalah 'admin'
+                'role' => 'admin', 
                 'nik' => $validated['nik'] ?? null,
             ]);
 
             // Langkah B: Buat entri di tabel 'tb_companies'
-            // (Saran perbaikan: Gunakan 'name' dari form, bukan 'username' untuk PJ)
             $company = Company::create([
                 'nama_perusahaan' => $validated['company_name'],
                 'no_hp' => $validated['no_hp'],
@@ -66,7 +63,6 @@ class RegisterController extends Controller
             ]);
 
             // Langkah C: Buat entri di tabel 'tb_admins'
-            // (Saran perbaikan: Gunakan 'name' dari form, bukan 'username')
             Admin::create([
                 'nama_lengkap' => $validated['name'],
                 'username' => $validated['username'],
@@ -89,22 +85,10 @@ class RegisterController extends Controller
             return back()->withInput()->with('error', 'Terjadi kesalahan saat pendaftaran. Silakan coba lagi.');
         }
         
-        // 3. Kirim Email Notifikasi
-        try {
-            $loginUrl = route('login'); // Mendapatkan URL ke halaman login
-            
-            // Mengirim email menggunakan Mailable yang sudah kita buat
-            // Kita kirim $validated karena berisi semua data form (termasuk password plain-text)
-            Mail::to($validated['email'])->send(new RegistrationSuccessful($validated, $loginUrl));
+        // --- BAGIAN KIRIM EMAIL SUDAH DIHAPUS ---
 
-        } catch (\Exception $e) {
-            // JIKA EMAIL GAGAL: Jangan batalkan registrasi. Cukup log error.
-            // Registrasi pengguna tetap berhasil.
-            Log::error('REGISTRATION SUCCEEDED (DB) BUT FAILED (EMAIL): ' . $e->getMessage());
-        }
-
-        // 4. Redirect ke halaman login dengan pesan sukses
-        // (Pesan diubah sedikit untuk memberitahu user agar cek email)
-        return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan cek email Anda untuk detail akun. Akun Anda sedang ditinjau dan akan segera diaktifkan.');
+        // 3. Redirect ke halaman login dengan pesan sukses
+        // Pesan disesuaikan karena tidak ada email yang dikirim
+        return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Akun Anda sedang ditinjau dan akan segera diaktifkan.');
     }
 }
