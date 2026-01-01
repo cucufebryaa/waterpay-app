@@ -105,10 +105,61 @@
     </div>
 
     <!-- STATS CARDS (Opsional: Hitung di View untuk ringkasan cepat) -->
-    <div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('admin.pembayaran.export-pdf') }}" class="btn btn-primary">
-        <i class="bi bi-file-pdf"></i> Cetak Laporan (PDF)
-    </a>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <form action="{{ route('admin.pembayaran.index') }}" method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Cari Data</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0 ps-0" 
+                               value="{{ request('search') }}" 
+                               placeholder="Nama Pelanggan / Petugas...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">Bulan</label>
+                    <select name="bulan" class="form-select">
+                        <option value="">Semua Bulan</option>
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                                {{ Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">Tahun</label>
+                    <select name="tahun" class="form-select">
+                        <option value="">Semua Tahun</option>
+                        @for($y = date('Y'); $y >= date('Y') - 5; $y--)
+                            <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-2">
+                     <label class="form-label d-block small fw-bold text-muted">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-filter"></i>
+                        </button>
+                        @if(request('search') || request('bulan') || request('tahun'))
+                            <a href="{{ route('admin.pembayaran.index') }}" class="btn btn-secondary" title="Reset Filter">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-md-2">
+                     <label class="form-label d-block small fw-bold text-muted">&nbsp;</label>
+                    <a href="{{ route('admin.pembayaran.export-pdf', request()->query()) }}" class="btn btn-outline-danger w-100" target="_blank">
+                        <i class="bi bi-file-pdf"></i> PDF
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
     <div class="row g-3 mb-4">
         @php
