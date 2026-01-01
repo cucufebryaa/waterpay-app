@@ -9,6 +9,8 @@ use App\Models\Pemakaian;
 use Barryvdh\Dompdf\Facade\Pdf;
 
 
+use Carbon\Carbon;
+
 class PembayaranController extends Controller
 {
     private function getCompanyId()
@@ -20,9 +22,53 @@ class PembayaranController extends Controller
     }
     
     /**
+     * Private method to get filtered data query
+     */
+    private function getFilteredData(Request $request, $id_company)
+    {
+        $query = Pembayaran::where('id_company', $id_company)
+                            ->with(['pelanggan', 'pemakaian.petugas']); // Eager load petugas via pemakaian
+
+        // Filter by Month
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tanggal_bayar', $request->bulan);
+            
+            // If month is selected but year is NOT, default to current year
+            // to prevent pulling data from all years for that month (?)
+            // Or let user control it explicitly. 
+            // Usually if Month selected, Year is expected.
+            if (!$request->filled('tahun')) {
+                $query->whereYear('tanggal_bayar', now()->year);
+            }
+        }
+
+        // Filter by Year
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_bayar', $request->tahun);
+        }
+
+        // Filter by Search (Pelanggan Name or Petugas Name)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('pelanggan', function($qPelanggan) use ($search) {
+                    $qPelanggan->where('nama', 'like', "%{$search}%");
+                })
+                ->orWhereHas('pemakaian', function($qPemakaian) use ($search) {
+                    $qPemakaian->whereHas('petugas', function($qPetugas) use ($search) {
+                        $qPetugas->where('nama', 'like', "%{$search}%");
+                    });
+                });
+            });
+        }
+
+        return $query->orderBy('tanggal_bayar', 'desc');
+    }
+
+    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $id_company = $this->getCompanyId();
 
@@ -30,12 +76,8 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan perusahaan manapun.');
         }
 
-        // PERBAIKAN DI SINI:
-        // Ganti 'tagihan' menjadi 'pemakaian' sesuai nama fungsi relasi di Model Pembayaran
-        $dataPembayaran = Pembayaran::where('id_company', $id_company)
-                            ->with(['pelanggan', 'pemakaian']) 
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+        // Get Filtered Data
+        $dataPembayaran = $this->getFilteredData($request, $id_company)->get();
 
         return view('admin.pembayaran.index', compact('dataPembayaran'));
     }
@@ -130,7 +172,7 @@ class PembayaranController extends Controller
         return redirect()->route('admin.pembayaran.index')->with('success', 'Data Pembayaran #' . $pembayaran->id . ' berhasil dihapus.');
     }
 
-    public function exportPdf()
+    public function exportPdf(Request $request)
     {
         $id_company = $this->getCompanyId();
 
@@ -138,31 +180,45 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Aksi tidak diizinkan.');
         }
 
-        // 1. Ambil data
-        $dataPembayaran = Pembayaran::where('id_company', $id_company)
-                            ->with(['pelanggan', 'pemakaian']) 
-                            ->orderBy('tanggal_bayar', 'desc') 
-                            ->get();
+        // 1. Ambil data dengan fiter yang SAMA
+        $dataPembayaran = $this->getFilteredData($request, $id_company)->get();
 
-        // 2. Siapkan data statistik
+        // 2. Siapkan data statistik (Statistik juga harus mengikuti filter jika diinginkan, 
+        // tapi biasanya statistik di header PDF mencerminkan data yang DITAMPILKAN)
+        // Jadi kita hitung dari $dataPembayaran hasil filter.
         $totalUang = $dataPembayaran->where('status', 'success')->sum('total_bayar');
         $totalSukses = $dataPembayaran->where('status', 'success')->count();
         $totalPending = $dataPembayaran->where('status', 'pending')->count();
 
-        // 3. Muat view menggunakan Helper app('dompdf.wrapper')
-        // Ini adalah perubahan krusial.
+        // 3. Siapkan Filename & Label
+        $fileName = 'Laporan_Pembayaran';
+        $periodeLabel = 'Semua Riwayat Transaksi';
+
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $monthName = Carbon::create()->month((int)$request->bulan)->translatedFormat('F');
+            $fileName .= '_' . $monthName . '_' . $request->tahun;
+            $periodeLabel = $monthName . ' ' . $request->tahun;
+        } elseif ($request->filled('tahun')) {
+            $fileName .= '_Tahun_' . $request->tahun;
+            $periodeLabel = 'Tahun ' . $request->tahun;
+        } else {
+            $fileName .= '_' . now()->format('Ymd_His');
+        }
+
+        $fileName .= '.pdf';
+
+        // 4. Load View
         $pdf = app('dompdf.wrapper')->loadView('admin.pembayaran.laporan_pdf', [
             'dataPembayaran' => $dataPembayaran,
             'totalUang' => $totalUang,
             'totalSukses' => $totalSukses,
             'totalPending' => $totalPending,
             'tanggalCetak' => now(),
+            'periodeLabel' => $periodeLabel,
         ]);
 
-        // Atur ukuran kertas
+        // 5. Set Paper & Stream
         $pdf->setPaper('A4', 'landscape');
-        
-        // 4. Unduh file PDF
-        return $pdf->stream('Laporan_Pembayaran_' . now()->format('Ymd_His') . '.pdf');
+        return $pdf->stream($fileName);
     }
-};
+}

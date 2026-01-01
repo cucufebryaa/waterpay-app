@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Pembayaran - {{ $tanggalCetak->format('d M Y') }}</title>
+    <title>Laporan Pembayaran - {{ $periodeLabel }}</title>
     <style>
         /* --- STYLE KHUSUS PRINT PDF --- */
         body { 
@@ -113,7 +113,7 @@
     <div class="report-header">
         <h1>LAPORAN RIWAYAT PEMBAYARAN MASUK</h1>
         <p>Dicetak pada: {{ $tanggalCetak->format('d F Y H:i:s') }}</p>
-        <p>Periode Data: Semua Riwayat Transaksi</p>
+        <p>Periode Data: {{ $periodeLabel }}</p>
     </div>
 
     <table class="summary-table">
